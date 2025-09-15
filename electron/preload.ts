@@ -25,14 +25,17 @@ contextBridge.exposeInMainWorld("api", {
   // 모드 초기화
   resetMods: (smapiPath: string, modStates: Record<string, boolean>) =>
     ipcRenderer.invoke("reset-mods", { smapiPath, modStates }),
-
-  // // 설정 읽기
+  //게임 옵션 동기화
+  syncConfigIngame: (smapiPath: string) =>
+    ipcRenderer.invoke("sync-config-ingame", smapiPath),
+  // 프리셋 읽기
   readConfig: (): Promise<Record<string, any>> =>
     ipcRenderer.invoke("read-config"),
-  // 설정 쓰기
+
+  // 사용자 정보 읽기
   readInfo: () => ipcRenderer.invoke("read-info"),
 
-  // 설정 쓰기
+  // 사용자 정보 쓰기
   writeInfo: (data: Record<string, string>) =>
     ipcRenderer.invoke("write-info", data),
 

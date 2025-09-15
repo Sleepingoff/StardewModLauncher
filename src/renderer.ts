@@ -31,6 +31,8 @@ interface Window {
 
     openMyModsFolder: () => Promise<void>;
     readConfig: () => Promise<Presets>;
+    syncConfigIngame: (smapiPath: string) => Promise<{ success: boolean }>;
+
     writeInfo: (data: Record<string, string>) => Promise<void>;
     readInfo: () => Promise<Record<string, string>>;
 
@@ -410,6 +412,7 @@ const openFolderBtn = document.getElementById(
   "openFolderBtn"
 ) as HTMLButtonElement;
 const savePathBtn = document.getElementById("savePathBtn") as HTMLButtonElement;
+const syncBtn = document.getElementById("syncBtn") as HTMLButtonElement;
 const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
 
 async function initUserInfo() {
@@ -424,19 +427,25 @@ savePathBtn.addEventListener("click", async () => {
 // -------------------- Apply  --------------------
 applyBtn.addEventListener("click", async () => {
   const smapiPath = smapiPathInput.value.trim();
-  if (!smapiPath) return alert(t("alerts.noSmapiPath"));
+  if (!smapiPath) return alert(text.alerts.noSmapiPath);
 
   const selectedPreset = presetContainer.textContent;
-  if (!selectedPreset) return alert(t("alerts.noSelectedPreset"));
+  if (!selectedPreset) return alert(text.alerts.noSelectedPreset);
 
   await window.api.applyMods(smapiPath, modStates);
-  alert(t("alerts.modsApplied"));
+  alert(text.alerts.modsApplied);
 });
 
 // -------------------- Reset Mods --------------------
 resetBtn.addEventListener("click", async () => {
   await window.api.resetMods(modStates);
-  alert(t("alerts.modsReset"));
+  alert(text.alerts.modsReset);
+});
+// -------------------- Sync Mods Config --------------------
+syncBtn.addEventListener("click", async () => {
+  const smapiPath = smapiPathInput.value.trim();
+  await window.api.syncConfigIngame(smapiPath);
+  alert(text.alerts.syncConfigOption);
 });
 
 openFolderBtn.addEventListener("click", async () => {

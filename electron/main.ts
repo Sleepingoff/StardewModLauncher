@@ -151,7 +151,11 @@ import {
   readPreset,
   updatePreset,
 } from "./presetManager";
-import { buildModMapRecursive, loadConfig } from "./configManager";
+import {
+  buildModMapRecursive,
+  loadConfig,
+  safeParseManifest,
+} from "./configManager";
 import { getModsFromDisk } from "./modManager"; // Mods 폴더 스캔 유틸 (필요 시 구현)
 import { readInfo, writeInfo } from "./infoManager";
 
@@ -178,6 +182,48 @@ ipcMain.handle("read-info", () => {
 // 사용자 설정 쓰기
 ipcMain.handle("write-info", (event, data) => {
   return writeInfo(data);
+});
+
+// 게임 옵션 동기화
+ipcMain.handle("sync-config-ingame", async (_event, smapiPath: string) => {
+  if (!smapiPath) throw new Error("smapiPath is not provided");
+
+  const gameModsPath = getModsPath(smapiPath); // 게임 내 Mods 경로
+  const programModsPath = directory.MODS_DIR; // 프로그램 내 Mods 경로
+
+  // 게임 Mods 폴더 순회
+  const gameModFolders = fs.readdirSync(gameModsPath);
+
+  for (const folder of gameModFolders) {
+    const gameModPath = path.join(gameModsPath, folder);
+    const manifestPath = path.join(gameModPath, "manifest.json");
+    const configPath = path.join(gameModPath, "config.json");
+
+    if (!fs.existsSync(manifestPath) || !fs.existsSync(configPath)) continue;
+
+    try {
+      const manifest = safeParseManifest(manifestPath);
+      const uniqueId = manifest.UniqueID;
+      if (!uniqueId) continue;
+
+      // 프로그램 내 동일한 UniqueID 모드 탐색
+      const programModPath = path.join(programModsPath, folder);
+      const programManifest = path.join(programModPath, "manifest.json");
+      const programConfig = path.join(programModPath, "config.json");
+
+      if (fs.existsSync(programManifest)) {
+        const programManifestData = safeParseManifest(programManifest);
+        if (programManifestData.UniqueID === uniqueId) {
+          // config.json 동기화 (덮어쓰기)
+          await fs.copyFile(configPath, programConfig);
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to sync config for ${folder}:`, err);
+    }
+  }
+
+  return { success: true };
 });
 
 // 프리셋 생성

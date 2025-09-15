@@ -3335,6 +3335,35 @@ ipcMain.handle("read-info", () => {
 ipcMain.handle("write-info", (event, data) => {
   return writeInfo(data);
 });
+ipcMain.handle("sync-config-ingame", async (_event, smapiPath) => {
+  if (!smapiPath) throw new Error("smapiPath is not provided");
+  const gameModsPath = getModsPath(smapiPath);
+  const programModsPath = dir.MODS_DIR;
+  const gameModFolders = fs.readdirSync(gameModsPath);
+  for (const folder of gameModFolders) {
+    const gameModPath = path$c.join(gameModsPath, folder);
+    const manifestPath = path$c.join(gameModPath, "manifest.json");
+    const configPath = path$c.join(gameModPath, "config.json");
+    if (!fs.existsSync(manifestPath) || !fs.existsSync(configPath)) continue;
+    try {
+      const manifest = safeParseManifest(manifestPath);
+      const uniqueId = manifest.UniqueID;
+      if (!uniqueId) continue;
+      const programModPath = path$c.join(programModsPath, folder);
+      const programManifest = path$c.join(programModPath, "manifest.json");
+      const programConfig = path$c.join(programModPath, "config.json");
+      if (fs.existsSync(programManifest)) {
+        const programManifestData = safeParseManifest(programManifest);
+        if (programManifestData.UniqueID === uniqueId) {
+          await fs.copyFile(configPath, programConfig);
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to sync config for ${folder}:`, err);
+    }
+  }
+  return { success: true };
+});
 ipcMain.handle(
   "create-preset",
   (event, name, mods) => {

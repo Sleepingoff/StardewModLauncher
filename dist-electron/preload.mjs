@@ -20,11 +20,13 @@ electron.contextBridge.exposeInMainWorld("api", {
   applyMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("apply-mods", { smapiPath, modStates }),
   // 모드 초기화
   resetMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("reset-mods", { smapiPath, modStates }),
-  // // 설정 읽기
+  //게임 옵션 동기화
+  syncConfigIngame: (smapiPath) => electron.ipcRenderer.invoke("sync-config-ingame", smapiPath),
+  // 프리셋 읽기
   readConfig: () => electron.ipcRenderer.invoke("read-config"),
-  // 설정 쓰기
+  // 사용자 정보 읽기
   readInfo: () => electron.ipcRenderer.invoke("read-info"),
-  // 설정 쓰기
+  // 사용자 정보 쓰기
   writeInfo: (data) => electron.ipcRenderer.invoke("write-info", data),
   //내 MODS 폴더 열기
   openMyModsFolder: () => electron.ipcRenderer.invoke("open-mods-folder"),
