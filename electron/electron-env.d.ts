@@ -42,7 +42,7 @@ interface Window {
     getMods: () => Promise<string[]>;
     getModListTree: () => Promise<Record<string, string[]>>; // 상위 폴더 → 하위 모드
     applyMods: (smapiPath: string, modStates: ModStates) => Promise<void>;
-    resetMods: (modStates: ModStates) => Promise<void>;
+    resetMods: (path: string) => Promise<void>;
 
     openMyModsFolder: () => Promise<void>;
     readConfig: () => Promise<Presets>;

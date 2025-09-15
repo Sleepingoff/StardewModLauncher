@@ -73,6 +73,134 @@ function applyI18n() {
 
 // =========================================================
 // === ModTree renderer (ADD) ==============================
+// function renderModTree(
+//   tree: Record<string, any>,
+//   container: HTMLElement,
+//   parentPath = ""
+// ) {
+//   Object.entries(tree).forEach(([name, value]) => {
+//     const fullPath = parentPath ? `${parentPath}/${name}` : name;
+
+//     // 📌 leaf: 모드 노드 (__uniqueId, __enabled 보유)
+//     if (typeof value === "object" && value.uniqueId) {
+//       const checkbox = document.createElement("input");
+//       checkbox.type = "checkbox";
+//       checkbox.id = fullPath;
+//       checkbox.checked = !!value.enabled;
+
+//       const label = document.createElement("label");
+//       const span = document.createElement("span");
+//       label.appendChild(checkbox);
+//       label.appendChild(span);
+//       label.appendChild(document.createTextNode(name));
+//       label.dataset.path = fullPath;
+
+//       container.appendChild(label);
+//       container.appendChild(document.createElement("br"));
+
+//       if (!modStates[name]) {
+//         modStates[name] = { ...value, enabled: checkbox.checked };
+//       } else {
+//         modStates[name].enabled = checkbox.checked;
+//       }
+
+//       checkbox.checked = modStates[name].enabled;
+
+//       checkbox.addEventListener("change", () => {
+//         modStates[name].enabled = checkbox.checked;
+//       });
+//     }
+//     // 📌 폴더 노드 (object지만 __uniqueId 없음)
+//     else if (typeof value === "object") {
+//       const wrapper = document.createElement("div");
+//       wrapper.style.marginBottom = "4px";
+
+//       const parentLabel = document.createElement("label");
+//       const spanCheckbox = document.createElement("span");
+
+//       const parentCheckbox = document.createElement("input");
+//       parentCheckbox.type = "checkbox";
+//       parentCheckbox.id = fullPath;
+
+//       parentLabel.appendChild(parentCheckbox);
+//       parentLabel.appendChild(spanCheckbox);
+
+//       const toggleBtn = document.createElement("button");
+//       toggleBtn.textContent = name;
+
+//       const subContainer = document.createElement("div");
+//       subContainer.style.display = "none";
+//       subContainer.style.paddingLeft = "20px";
+
+//       wrapper.appendChild(parentLabel);
+//       wrapper.appendChild(toggleBtn);
+//       wrapper.appendChild(subContainer);
+//       container.appendChild(wrapper);
+
+//       // 🔁 재귀 호출
+//       renderModTree(value, subContainer, fullPath);
+//       // 부모 체크박스 초기 상태 계산
+//       const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
+//         'input[type="checkbox"]'
+//       );
+
+//       if (childCheckboxes.length > 0) {
+//         const allChecked = Array.from(childCheckboxes).every((c) => c.checked);
+//         parentCheckbox.checked = allChecked; // 모두 켜져 있으면 부모 = true
+//         parentCheckbox.indeterminate =
+//           !allChecked && Array.from(childCheckboxes).some((c) => c.checked); // 일부만 켜져 있으면 indeterminate
+//       } else {
+//         parentCheckbox.checked = false; // 자식이 없으면 기본 true
+//       }
+//       // 토글 버튼 (열고 닫기)
+//       toggleBtn.addEventListener("click", () => {
+//         subContainer.style.display =
+//           subContainer.style.display === "none" ? "block" : "none";
+//       });
+
+//       // 부모 체크박스 → 자식 전체 토글
+//       parentCheckbox.addEventListener("change", () => {
+//         const checked = parentCheckbox.checked;
+//         modStates[fullPath].enabled = checked;
+
+//         const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
+//           'input[type="checkbox"]'
+//         );
+//         childCheckboxes.forEach((child) => {
+//           child.checked = checked;
+//           if (!value.uniqueId) return;
+//           if (!modStates[child.id]) {
+//             modStates[child.id] = {
+//               ...value,
+//               enabled: (value.uniqueId && checked) ?? false,
+//             };
+//           } else {
+//             modStates[child.id].enabled = checked;
+//           }
+//         });
+//       });
+
+//       // 자식 체크박스 상태 → 부모 상태 갱신
+//       subContainer.addEventListener("change", (e) => {
+//         const target = e.target as HTMLInputElement;
+//         if (target.type === "checkbox") {
+//           modStates[target.id].enabled = target.checked;
+
+//           const childCheckboxes =
+//             subContainer.querySelectorAll<HTMLInputElement>(
+//               'input[type="checkbox"]'
+//             );
+//           const allChecked = Array.from(childCheckboxes).every(
+//             (c) => c.checked
+//           );
+
+//           parentCheckbox.checked = allChecked;
+//           modStates[fullPath].enabled = allChecked;
+//         }
+//       });
+//     }
+//   });
+// }
 function renderModTree(
   tree: Record<string, any>,
   container: HTMLElement,
@@ -88,6 +216,10 @@ function renderModTree(
       checkbox.id = fullPath;
       checkbox.checked = !!value.enabled;
 
+      // uniqueId, name 저장
+      checkbox.dataset.uniqueId = value.uniqueId;
+      checkbox.dataset.name = name;
+
       const label = document.createElement("label");
       const span = document.createElement("span");
       label.appendChild(checkbox);
@@ -98,18 +230,18 @@ function renderModTree(
       container.appendChild(label);
       container.appendChild(document.createElement("br"));
 
-      if (!modStates[value.uniqueId]) {
-        modStates[value.uniqueId] = { name, enabled: value.enabled };
-      } else {
-        modStates[value.uniqueId].enabled = value.enabled;
-      }
-
-      checkbox.checked = modStates[value.uniqueId].enabled;
+      // modStates 업데이트 (uniqueId 기반)
+      modStates[value.uniqueId] = {
+        name,
+        enabled: checkbox.checked,
+      };
 
       checkbox.addEventListener("change", () => {
-        modStates[value.uniqueId].enabled = checkbox.checked;
+        const uid = checkbox.dataset.uniqueId!;
+        modStates[uid].enabled = checkbox.checked;
       });
     }
+
     // 📌 폴더 노드 (object지만 __uniqueId 없음)
     else if (typeof value === "object") {
       const wrapper = document.createElement("div");
@@ -139,19 +271,22 @@ function renderModTree(
 
       // 🔁 재귀 호출
       renderModTree(value, subContainer, fullPath);
+
       // 부모 체크박스 초기 상태 계산
       const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
-        'input[type="checkbox"]'
+        'input[type="checkbox"][data-unique-id]'
       );
 
       if (childCheckboxes.length > 0) {
         const allChecked = Array.from(childCheckboxes).every((c) => c.checked);
-        parentCheckbox.checked = allChecked; // 모두 켜져 있으면 부모 = true
-        parentCheckbox.indeterminate =
-          !allChecked && Array.from(childCheckboxes).some((c) => c.checked); // 일부만 켜져 있으면 indeterminate
+        const someChecked = Array.from(childCheckboxes).some((c) => c.checked);
+
+        parentCheckbox.checked = allChecked;
+        parentCheckbox.indeterminate = !allChecked && someChecked;
       } else {
-        parentCheckbox.checked = false; // 자식이 없으면 기본 true
+        parentCheckbox.checked = false;
       }
+
       // 토글 버튼 (열고 닫기)
       toggleBtn.addEventListener("click", () => {
         subContainer.style.display =
@@ -161,47 +296,46 @@ function renderModTree(
       // 부모 체크박스 → 자식 전체 토글
       parentCheckbox.addEventListener("change", () => {
         const checked = parentCheckbox.checked;
-        modStates[fullPath].enabled = checked;
 
         const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
-          'input[type="checkbox"]'
+          'input[type="checkbox"][data-unique-id]'
         );
+
         childCheckboxes.forEach((child) => {
           child.checked = checked;
-          if (!modStates[child.id]) {
-            modStates[child.id] = {
-              name: name,
-              enabled: value.enabled ?? false,
-            };
-          } else {
-            modStates[child.id].enabled = checked;
-          }
+
+          const uid = child.dataset.uniqueId!;
+          modStates[uid] = {
+            ...(modStates[uid] ?? {
+              uniqueId: uid,
+              name: child.dataset.name ?? uid,
+            }),
+            enabled: checked,
+          };
         });
+
+        parentCheckbox.indeterminate = false;
       });
 
       // 자식 체크박스 상태 → 부모 상태 갱신
       subContainer.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
-        if (target.type === "checkbox") {
-          modStates[target.id].enabled = target.checked;
-
-          const childCheckboxes =
-            subContainer.querySelectorAll<HTMLInputElement>(
-              'input[type="checkbox"]'
-            );
-          const allChecked = Array.from(childCheckboxes).every(
-            (c) => c.checked
-          );
-
-          parentCheckbox.checked = allChecked;
-          modStates[fullPath].enabled = allChecked;
+        if (target.type === "checkbox" && target.dataset.uniqueId) {
+          const uid = target.dataset.uniqueId;
+          modStates[uid].enabled = target.checked;
         }
+
+        const leafBoxes = subContainer.querySelectorAll<HTMLInputElement>(
+          'input[type="checkbox"][data-unique-id]'
+        );
+        const total = leafBoxes.length;
+        const checkedCount = Array.from(leafBoxes).filter(
+          (c) => c.checked
+        ).length;
+
+        parentCheckbox.checked = total > 0 && checkedCount === total;
+        parentCheckbox.indeterminate = checkedCount > 0 && checkedCount < total;
       });
-      if (!modStates[fullPath]) {
-        modStates[fullPath] = { name: name, enabled: value.enabled ?? false };
-      } else {
-        modStates[fullPath].enabled = value.enabled ?? false;
-      }
     }
   });
 }
@@ -225,14 +359,14 @@ async function refreshModTree() {
   contentArea.innerHTML = "";
   const presetName = sectionTitle.querySelector("input")!;
 
-  // 트리 데이터 재요청
-  const tree = await window.api.readPreset(presetName.value);
-
   // 관계 맵 초기화(경로 변경 가능성 반영)
   parentChildrenMap.clear();
   childParentMap.clear();
 
   renderBtnInModTrees();
+
+  // 트리 데이터 재요청
+  const tree = await window.api.readPreset(presetName?.value ?? "");
   renderModTree(tree as any, contentArea);
 }
 
@@ -310,6 +444,7 @@ async function renderPresetList() {
 
       renderBtnInModTrees();
       renderModTree(modStates, contentArea);
+      modStates = {};
     });
 
     ul.appendChild(li);
@@ -321,6 +456,22 @@ async function renderPresetList() {
 // -----------------------------
 // 모드 체크박스 화면
 // -----------------------------
+
+function syncModStatesFromUI() {
+  contentArea
+    .querySelectorAll<HTMLInputElement>("input[type=checkbox]")
+    .forEach((cb) => {
+      const key = cb.dataset.path || cb.id; // label.dataset.path 활용 가능
+      if (!key) return;
+
+      if (!modStates[key]) {
+        modStates[key] = { name: cb.dataset.name ?? key, enabled: cb.checked }; // 없으면 생성
+      } else {
+        modStates[key].enabled = cb.checked; // 있으면 갱신
+      }
+    });
+}
+
 async function renderBtnInModTrees() {
   sectionTitle.innerHTML = "";
   const presetNameInfo = document.createElement("p");
@@ -343,6 +494,7 @@ async function renderBtnInModTrees() {
   updateBtn.textContent = text.buttons?.updatePreset || "Update Preset";
   updateBtn.addEventListener("click", async () => {
     if (!selectedPreset) return;
+    syncModStatesFromUI();
     await window.api.updatePreset(
       selectedPreset.trim(),
       newName ?? selectedPreset.trim(),
@@ -406,9 +558,7 @@ const openFolderBtn = document.getElementById(
 const savePathBtn = document.getElementById("savePathBtn") as HTMLButtonElement;
 const syncBtn = document.getElementById("syncBtn") as HTMLButtonElement;
 const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
-const presetContainer = document.getElementById(
-  "presetContainer"
-) as HTMLElement;
+
 async function initUserInfo() {
   const info = await window.api.readInfo();
   if (info?.smapiPath) smapiPathInput.value = info.smapiPath;
@@ -423,7 +573,6 @@ applyBtn.addEventListener("click", async () => {
   const smapiPath = smapiPathInput.value.trim();
   if (!smapiPath) return alert(text.alerts.noSmapiPath);
 
-  const selectedPreset = presetContainer.textContent;
   if (!selectedPreset) return alert(text.alerts.noSelectedPreset);
 
   await window.api.applyMods(smapiPath, modStates);
@@ -432,7 +581,12 @@ applyBtn.addEventListener("click", async () => {
 
 // -------------------- Reset Mods --------------------
 resetBtn.addEventListener("click", async () => {
-  await window.api.resetMods(modStates);
+  const userInfo = await window.api.readInfo();
+  if (!smapiPathInput.value) {
+    alert(text.alerts.noSmapiPath);
+    return;
+  }
+  await window.api.resetMods(userInfo.smapiPath ?? smapiPathInput.value);
   alert(text.alerts.modsReset);
 });
 // -------------------- Sync Mods Config --------------------
@@ -444,7 +598,7 @@ syncBtn.addEventListener("click", async () => {
 
 openFolderBtn.addEventListener("click", async () => {
   await window.api.openMyModsFolder();
-  await refreshModTree();
+  // await refreshModTree();
 });
 
 // -----------------------------

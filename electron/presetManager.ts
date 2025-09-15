@@ -35,12 +35,11 @@ export function createPreset(
   mods: Record<string, boolean>
 ) {
   const config = loadConfig(presetName);
-
   if (config[presetName]) {
     throw new Error(`Preset "${presetName}" already exists.`);
   }
   config[presetName] = mods;
-  saveConfig(config, presetName);
+  savePreset(presetName, config);
 }
 
 export function readPreset(presetName: string) {
@@ -53,23 +52,35 @@ export function updatePreset(
   newName: string,
   mods: Record<string, { name: string; enabled: boolean }>
 ) {
-  if (oldName != newName) deletePreset(oldName);
-  savePreset(newName, mods);
+  const prevConfig = readPreset(oldName);
+  const newConfig = {
+    ...prevConfig,
+    ...mods,
+  };
+
+  // 1️⃣ 새 프리셋 먼저 저장
+  savePreset(newName, newConfig);
+
+  // 2️⃣ 이름이 다르면 기존 프리셋 삭제
+  if (oldName !== newName) {
+    deletePreset(oldName);
+  }
 }
-/**
+/*
  * 특정 프리셋 저장 (기존 파일에 merge)
  */
 export function savePreset(
   presetName: string,
   presetData: Record<string, { name: string; enabled: boolean }>
 ) {
-  let all = loadAllPresets();
-  all[presetName] = presetData;
-  fs.writeFileSync(
-    directory.CONFIG_PATH,
-    JSON.stringify(all, null, 2),
-    "utf-8"
-  );
+  // let all = loadAllPresets();
+  // all[presetName] = presetData;
+  // fs.writeFileSync(
+  //   directory.CONFIG_PATH,
+  //   JSON.stringify(all, null, 2),
+  //   "utf-8"
+  // );
+  saveConfig(presetData, presetName);
 }
 
 /**

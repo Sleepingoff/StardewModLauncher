@@ -60,7 +60,8 @@ export function buildModMapRecursive(
  * config.json 불러오기
  */
 export function loadConfig(presetName?: string): Record<string, any> {
-  if (!fs.existsSync(directory.CONFIG_PATH)) return {};
+  if (!fs.existsSync(directory.CONFIG_PATH))
+    fs.mkdirSync(directory.CONFIG_PATH);
 
   const raw = JSON.parse(fs.readFileSync(directory.CONFIG_PATH, "utf-8"));
   if (!presetName) return raw;
@@ -180,22 +181,23 @@ export function safeParseManifest(manifestPath: string): any | null {
  * @param modsDir Mods 경로
  */
 export function configToFolderTree(
-  config: Record<string, { name: string; enabled: boolean }>
+  config: Record<string, { uniqueId: string; enabled: boolean }>
 ): Record<string, any> {
   const tree: Record<string, any> = {};
 
-  for (const [uniqueId, { enabled }] of Object.entries(config)) {
-    const modPath = findModPathByUniqueId(directory.MODS_DIR, uniqueId);
+  for (const [name, { enabled }] of Object.entries(config)) {
+    const modPath = findModPathByUniqueId(directory.MODS_DIR, name);
     if (!modPath) continue;
 
     const relativePath = path.relative(directory.MODS_DIR, modPath);
+
     const parts = relativePath.split(path.sep);
 
     let current = tree;
     parts.forEach((part, idx) => {
       if (!current[part]) current[part] = {};
       if (idx === parts.length - 1) {
-        current[part].uniqueId = uniqueId;
+        current[part].uniqueId = name;
         current[part].enabled = enabled;
       }
       current = current[part];

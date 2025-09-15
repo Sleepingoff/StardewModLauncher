@@ -17,9 +17,9 @@ electron.contextBridge.exposeInMainWorld("api", {
   // setModList: (filePaths: string[], containerPath: string) =>
   //   ipcRenderer.invoke("mod-drop", { filePaths, containerPath }),
   // 모드 적용
-  applyMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("apply-mods", { smapiPath, modStates }),
+  applyMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("apply-mods", smapiPath, modStates),
   // 모드 초기화
-  resetMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("reset-mods", { smapiPath, modStates }),
+  resetMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("reset-mods", smapiPath, modStates),
   //게임 옵션 동기화
   syncConfigIngame: (smapiPath) => electron.ipcRenderer.invoke("sync-config-ingame", smapiPath),
   // 프리셋 읽기

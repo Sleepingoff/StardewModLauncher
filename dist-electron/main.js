@@ -4,8 +4,8 @@ import require$$0$1 from "stream";
 import require$$4 from "util";
 import require$$5 from "assert";
 import path$c from "path";
-import { fileURLToPath } from "url";
 import { app, ipcMain, shell, BrowserWindow } from "electron";
+import { fileURLToPath } from "url";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -1914,9 +1914,10 @@ var lib$1 = {
 const fs = /* @__PURE__ */ getDefaultExportFromCjs(lib$1);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path$c.dirname(__filename);
-const CONFIG_PATH = path$c.join(__dirname, "config.json");
-const INFO_PATH = path$c.join(__dirname, "info.json");
-const MODS_DIR = path$c.join(__dirname, "Mods");
+const userDataPath = app.getPath("userData");
+const CONFIG_PATH = path$c.join(userDataPath, "config.json");
+const INFO_PATH = path$c.join(userDataPath, "info.json");
+const MODS_DIR = path$c.join(userDataPath, "Mods");
 const dir = {
   __filename,
   __dirname,
@@ -3042,7 +3043,8 @@ function buildModMapRecursive(dir2, map = {}) {
   return map;
 }
 function loadConfig(presetName) {
-  if (!fs$j.existsSync(dir.CONFIG_PATH)) return {};
+  if (!fs$j.existsSync(dir.CONFIG_PATH))
+    fs$j.mkdirSync(dir.CONFIG_PATH);
   const raw = JSON.parse(fs$j.readFileSync(dir.CONFIG_PATH, "utf-8"));
   if (!presetName) return raw;
   let presetConfig = raw[presetName];
@@ -3121,8 +3123,8 @@ function safeParseManifest(manifestPath) {
 }
 function configToFolderTree(config) {
   const tree = {};
-  for (const [uniqueId, { enabled }] of Object.entries(config)) {
-    const modPath = findModPathByUniqueId(dir.MODS_DIR, uniqueId);
+  for (const [name, { enabled }] of Object.entries(config)) {
+    const modPath = findModPathByUniqueId(dir.MODS_DIR, name);
     if (!modPath) continue;
     const relativePath = path$c.relative(dir.MODS_DIR, modPath);
     const parts = relativePath.split(path$c.sep);
@@ -3130,7 +3132,7 @@ function configToFolderTree(config) {
     parts.forEach((part, idx) => {
       if (!current[part]) current[part] = {};
       if (idx === parts.length - 1) {
-        current[part].uniqueId = uniqueId;
+        current[part].uniqueId = name;
         current[part].enabled = enabled;
       }
       current = current[part];
@@ -3177,24 +3179,25 @@ function createPreset(presetName, mods) {
     throw new Error(`Preset "${presetName}" already exists.`);
   }
   config[presetName] = mods;
-  saveConfig(config, presetName);
+  savePreset(presetName, config);
 }
 function readPreset(presetName) {
   const config = loadConfig(presetName);
   return config;
 }
 function updatePreset(oldName, newName, mods) {
-  if (oldName != newName) deletePreset(oldName);
-  savePreset(newName, mods);
+  const prevConfig = readPreset(oldName);
+  const newConfig = {
+    ...prevConfig,
+    ...mods
+  };
+  savePreset(newName, newConfig);
+  if (oldName !== newName) {
+    deletePreset(oldName);
+  }
 }
 function savePreset(presetName, presetData) {
-  let all = loadAllPresets();
-  all[presetName] = presetData;
-  fs$j.writeFileSync(
-    dir.CONFIG_PATH,
-    JSON.stringify(all, null, 2),
-    "utf-8"
-  );
+  saveConfig(presetData, presetName);
 }
 function deletePreset(presetName) {
   let all = loadAllPresets();
@@ -3264,8 +3267,7 @@ function createWindow() {
 }
 app.whenReady().then(createWindow);
 function getModsPath(smapiPath) {
-  const smapiDir = path$c.dirname(smapiPath);
-  return path$c.join(smapiDir, "Mods");
+  return path$c.join(smapiPath, "../", "Mods");
 }
 function scanModsTreeByManifest(dir2) {
   if (!fs.existsSync(dir2)) return {};
@@ -3289,39 +3291,43 @@ function scanModsTreeByManifest(dir2) {
 ipcMain.handle("get-mod-list-tree", () => {
   return scanModsTreeByManifest(dir.MODS_DIR);
 });
-ipcMain.handle("apply-mods", async (_event, { smapiPath, modStates }) => {
-  if (!smapiPath) throw new Error("smapiPath is not provided");
-  const modsUserPath = getModsPath(smapiPath);
-  const modMap = buildModMapRecursive(dir.MODS_DIR);
-  for (const [uniqueId, enabled] of Object.entries(modStates)) {
-    const modInfo = modMap[uniqueId];
-    if (!modInfo) {
-      console.warn(`⚠️ Mod not found for UniqueID: ${uniqueId}`);
-      continue;
-    }
-    const src = modInfo.path;
-    const dest = path$c.join(modsUserPath, path$c.basename(src));
-    if (enabled) {
-      try {
-        fs.copyFileSync(src, dest);
-      } catch (err) {
-        console.error(`❌ Failed to copy ${uniqueId}:`, err);
+ipcMain.handle(
+  "apply-mods",
+  async (_event, smapiPath, modStates) => {
+    if (!smapiPath) throw new Error("smapiPath is not provided");
+    const modsUserPath = getModsPath(smapiPath);
+    const modMap = buildModMapRecursive(dir.MODS_DIR);
+    for (const [key2, value] of Object.entries(modStates)) {
+      const uniqueId = value.uniqueId ?? key2;
+      const modInfo = modMap[uniqueId];
+      if (!modInfo || !value.enabled) {
+        continue;
       }
-    } else {
-      try {
-        if (fs.existsSync(dest)) {
-          fs.removeSync(dest);
+      const src = modInfo.path;
+      const dest = path$c.join(modsUserPath, path$c.basename(src));
+      if (value.enabled) {
+        try {
+          await fs.copy(src, dest, { overwrite: true });
+        } catch (err) {
+          console.error(`❌ Failed to copy ${uniqueId}:`, err);
         }
-      } catch (err) {
-        console.error(`❌ Failed to remove ${uniqueId}:`, err);
+      } else {
+        try {
+          if (fs.existsSync(dest)) {
+            await fs.remove(dest);
+          }
+        } catch (err) {
+          console.error(`❌ Failed to remove ${uniqueId}:`, err);
+        }
       }
     }
   }
-});
+);
 ipcMain.handle("read-config", async () => {
   return loadConfig();
 });
 ipcMain.handle("open-mods-folder", async () => {
+  if (!fs.existsSync(dir.MODS_DIR)) fs.mkdirSync(dir.MODS_DIR);
   shell.openPath(dir.MODS_DIR);
 });
 ipcMain.handle("get-presets", () => {
@@ -3340,34 +3346,60 @@ ipcMain.handle("read-info", () => {
 ipcMain.handle("write-info", (_event, data) => {
   return writeInfo(data);
 });
+async function syncModsRecursive(gameModsPath, programModsPath) {
+  const entries = fs.readdirSync(gameModsPath, { withFileTypes: true });
+  for (const entry of entries) {
+    const gameEntryPath = path$c.join(gameModsPath, entry.name);
+    const programEntryPath = path$c.join(programModsPath, entry.name);
+    if (entry.isDirectory()) {
+      const manifestPath = path$c.join(gameEntryPath, "manifest.json");
+      if (fs.existsSync(manifestPath)) {
+        try {
+          const manifest = safeParseManifest(manifestPath);
+          const uniqueId = manifest.UniqueID;
+          if (!uniqueId) continue;
+          if (!fs.existsSync(programEntryPath)) {
+            await fs.copy(gameEntryPath, programEntryPath);
+          } else {
+            const programManifestPath = path$c.join(
+              programEntryPath,
+              "manifest.json"
+            );
+            const programConfigPath = path$c.join(
+              programEntryPath,
+              "config.json"
+            );
+            const gameConfigPath = path$c.join(gameEntryPath, "config.json");
+            if (fs.existsSync(programManifestPath)) {
+              const programManifest = safeParseManifest(programManifestPath);
+              if (programManifest.UniqueID === uniqueId && fs.existsSync(gameConfigPath)) {
+                await fs.copyFile(gameConfigPath, programConfigPath);
+              }
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to sync mod at ${gameEntryPath}:`, err);
+        }
+      } else {
+        await syncModsRecursive(gameEntryPath, programEntryPath);
+      }
+    }
+  }
+}
 ipcMain.handle("sync-config-ingame", async (_event, smapiPath) => {
   if (!smapiPath) throw new Error("smapiPath is not provided");
   const gameModsPath = getModsPath(smapiPath);
   const programModsPath = dir.MODS_DIR;
-  const gameModFolders = fs.readdirSync(gameModsPath);
-  for (const folder of gameModFolders) {
-    const gameModPath = path$c.join(gameModsPath, folder);
-    const manifestPath = path$c.join(gameModPath, "manifest.json");
-    const configPath = path$c.join(gameModPath, "config.json");
-    if (!fs.existsSync(manifestPath) || !fs.existsSync(configPath)) continue;
-    try {
-      const manifest = safeParseManifest(manifestPath);
-      const uniqueId = manifest.UniqueID;
-      if (!uniqueId) continue;
-      const programModPath = path$c.join(programModsPath, folder);
-      const programManifest = path$c.join(programModPath, "manifest.json");
-      const programConfig = path$c.join(programModPath, "config.json");
-      if (fs.existsSync(programManifest)) {
-        const programManifestData = safeParseManifest(programManifest);
-        if (programManifestData.UniqueID === uniqueId) {
-          await fs.copyFile(configPath, programConfig);
-        }
-      }
-    } catch (err) {
-      console.error(`Failed to sync config for ${folder}:`, err);
-    }
-  }
+  await syncModsRecursive(gameModsPath, programModsPath);
   return { success: true };
+});
+ipcMain.handle("reset-mods", async (_event, smapiPath) => {
+  try {
+    await fs.emptyDir(path$c.join(smapiPath, "../", "Mods"));
+  } catch (err) {
+    console.error("Error resetting mods:", err);
+    throw err;
+  }
 });
 ipcMain.handle(
   "create-preset",

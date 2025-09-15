@@ -325,8 +325,8 @@ button {
   font-weight: bold;
 }
 
-#mainSection .box-content {
+/* #mainSection .box-content {
   height: fit-content;
   max-height: 40vh;
   overflow-y: auto;
-}
+} */
