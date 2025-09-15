@@ -186,6 +186,7 @@ ipcMain.handle("read-info", () => {
 ipcMain.handle("write-info", (_event, data) => {
   return writeInfo(data);
 });
+const REQUIRED_MODS = ["ConsoleCommands", "SaveBackup"];
 
 // 게임 옵션 동기화
 async function syncModsRecursive(
@@ -237,6 +238,14 @@ async function syncModsRecursive(
           console.error(`Failed to sync mod at ${gameEntryPath}:`, err);
         }
       } else {
+        const folderName = path.basename(gameEntryPath);
+
+        if (REQUIRED_MODS.includes(folderName)) {
+        } else {
+          console.warn(`Skipping mod at ${gameEntryPath} (invalid manifest)`);
+          return; // 건너뛰기
+        }
+
         // 폴더 안에 더 들어가서 탐색 (중첩 구조 지원)
         await syncModsRecursive(gameEntryPath, programEntryPath);
       }

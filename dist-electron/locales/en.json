@@ -22,6 +22,7 @@
     "deletePreset": "Delete"
   },
   "alerts": {
+    "savePath": "Saved SMAPI path",
     "noSmapiPath": "Please enter the SMAPI path",
     "noPresetName": "Please enter a preset name",
     "noSelectedPreset": "Please select a preset",

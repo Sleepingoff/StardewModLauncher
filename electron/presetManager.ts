@@ -34,12 +34,13 @@ export function createPreset(
   presetName: string,
   mods: Record<string, boolean>
 ) {
-  const config = loadConfig(presetName);
-  if (config[presetName]) {
+  const config = listPresets();
+  if (config.includes(presetName)) {
     throw new Error(`Preset "${presetName}" already exists.`);
   }
-  config[presetName] = mods;
-  savePreset(presetName, config);
+  const newConfig = loadConfig(presetName);
+  newConfig[presetName] = mods;
+  savePreset(presetName, newConfig);
 }
 
 export function readPreset(presetName: string) {

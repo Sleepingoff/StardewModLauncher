@@ -1,13 +1,13 @@
 import M from "fs";
-import wt from "constants";
-import vt from "stream";
-import gt from "util";
-import bt from "assert";
-import p from "path";
-import { app as Ru, ipcMain as Y, shell as Pt, BrowserWindow as $t } from "electron";
-import { fileURLToPath as kt } from "url";
+import vt from "constants";
+import gt from "stream";
+import bt from "util";
+import $t from "assert";
+import h from "path";
+import { app as Ru, ipcMain as Y, shell as Pt, BrowserWindow as kt } from "electron";
+import { fileURLToPath as Ot } from "url";
 var Xu = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function Ot(u) {
+function _t(u) {
   return u && u.__esModule && Object.prototype.hasOwnProperty.call(u, "default") ? u.default : u;
 }
 var uu = {}, J = {};
@@ -27,7 +27,7 @@ J.fromPromise = function(u) {
     e.pop(), u.apply(this, e).then((n) => t(null, n), t);
   }, "name", { value: u.name });
 };
-var au = wt, xt = process.cwd, ju = null, _t = process.env.GRACEFUL_FS_PLATFORM || process.platform;
+var au = vt, xt = process.cwd, ju = null, It = process.env.GRACEFUL_FS_PLATFORM || process.platform;
 process.cwd = function() {
   return ju || (ju = xt.call(process)), ju;
 };
@@ -41,21 +41,21 @@ if (typeof process.chdir == "function") {
     ju = null, Ae.call(process, u);
   }, Object.setPrototypeOf && Object.setPrototypeOf(process.chdir, Ae);
 }
-var It = Nt;
-function Nt(u) {
+var Nt = jt;
+function jt(u) {
   au.hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./) && e(u), u.lutimes || t(u), u.chown = i(u.chown), u.fchown = i(u.fchown), u.lchown = i(u.lchown), u.chmod = n(u.chmod), u.fchmod = n(u.fchmod), u.lchmod = n(u.lchmod), u.chownSync = o(u.chownSync), u.fchownSync = o(u.fchownSync), u.lchownSync = o(u.lchownSync), u.chmodSync = r(u.chmodSync), u.fchmodSync = r(u.fchmodSync), u.lchmodSync = r(u.lchmodSync), u.stat = a(u.stat), u.fstat = a(u.fstat), u.lstat = a(u.lstat), u.statSync = F(u.statSync), u.fstatSync = F(u.fstatSync), u.lstatSync = F(u.lstatSync), u.chmod && !u.lchmod && (u.lchmod = function(c, l, A) {
     A && process.nextTick(A);
   }, u.lchmodSync = function() {
   }), u.chown && !u.lchown && (u.lchown = function(c, l, A, C) {
     C && process.nextTick(C);
   }, u.lchownSync = function() {
-  }), _t === "win32" && (u.rename = typeof u.rename != "function" ? u.rename : function(c) {
+  }), It === "win32" && (u.rename = typeof u.rename != "function" ? u.rename : function(c) {
     function l(A, C, y) {
       var f = Date.now(), E = 0;
       c(A, C, function s(w) {
         if (w && (w.code === "EACCES" || w.code === "EPERM" || w.code === "EBUSY") && Date.now() - f < 6e4) {
           setTimeout(function() {
-            u.stat(C, function(v, P) {
+            u.stat(C, function(v, $) {
               v && v.code === "ENOENT" ? c(A, C, s) : y(w);
             });
           }, E), E < 100 && (E += 10);
@@ -70,8 +70,8 @@ function Nt(u) {
       var w;
       if (s && typeof s == "function") {
         var v = 0;
-        w = function(P, R, ru) {
-          if (P && P.code === "EAGAIN" && v < 10)
+        w = function($, R, ru) {
+          if ($ && $.code === "EAGAIN" && v < 10)
             return v++, c.call(u, A, C, y, f, E, w);
           s.apply(this, arguments);
         };
@@ -162,7 +162,7 @@ function Nt(u) {
   function n(c) {
     return c && function(l, A, C) {
       return c.call(u, l, A, function(y) {
-        h(y) && (y = null), C && C.apply(this, arguments);
+        p(y) && (y = null), C && C.apply(this, arguments);
       });
     };
   }
@@ -171,14 +171,14 @@ function Nt(u) {
       try {
         return c.call(u, l, A);
       } catch (C) {
-        if (!h(C)) throw C;
+        if (!p(C)) throw C;
       }
     };
   }
   function i(c) {
     return c && function(l, A, C, y) {
       return c.call(u, l, A, C, function(f) {
-        h(f) && (f = null), y && y.apply(this, arguments);
+        p(f) && (f = null), y && y.apply(this, arguments);
       });
     };
   }
@@ -187,7 +187,7 @@ function Nt(u) {
       try {
         return c.call(u, l, A, C);
       } catch (y) {
-        if (!h(y)) throw y;
+        if (!p(y)) throw y;
       }
     };
   }
@@ -206,15 +206,15 @@ function Nt(u) {
       return C && (C.uid < 0 && (C.uid += 4294967296), C.gid < 0 && (C.gid += 4294967296)), C;
     };
   }
-  function h(c) {
+  function p(c) {
     if (!c || c.code === "ENOSYS")
       return !0;
     var l = !process.getuid || process.getuid() !== 0;
     return !!(l && (c.code === "EINVAL" || c.code === "EPERM"));
   }
 }
-var ye = vt.Stream, jt = Tt;
-function Tt(u) {
+var ye = gt.Stream, Tt = Lt;
+function Lt(u) {
   return {
     ReadStream: e,
     WriteStream: t
@@ -225,8 +225,8 @@ function Tt(u) {
     var i = this;
     this.path = n, this.fd = null, this.readable = !0, this.paused = !1, this.flags = "r", this.mode = 438, this.bufferSize = 64 * 1024, r = r || {};
     for (var o = Object.keys(r), a = 0, F = o.length; a < F; a++) {
-      var h = o[a];
-      this[h] = r[h];
+      var p = o[a];
+      this[p] = r[p];
     }
     if (this.encoding && this.setEncoding(this.encoding), this.start !== void 0) {
       if (typeof this.start != "number")
@@ -270,40 +270,40 @@ function Tt(u) {
     this.busy = !1, this._queue = [], this.fd === null && (this._open = u.open, this._queue.push([this._open, this.path, this.flags, this.mode, void 0]), this.flush());
   }
 }
-var Lt = Rt, Mt = Object.getPrototypeOf || function(u) {
+var Mt = Jt, Rt = Object.getPrototypeOf || function(u) {
   return u.__proto__;
 };
-function Rt(u) {
+function Jt(u) {
   if (u === null || typeof u != "object")
     return u;
   if (u instanceof Object)
-    var e = { __proto__: Mt(u) };
+    var e = { __proto__: Rt(u) };
   else
     var e = /* @__PURE__ */ Object.create(null);
   return Object.getOwnPropertyNames(u).forEach(function(t) {
     Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(u, t));
   }), e;
 }
-var N = M, Jt = It, Wt = jt, qt = Lt, xu = gt, z, Tu;
+var N = M, Wt = Nt, qt = Tt, Ut = Mt, _u = bt, z, Tu;
 typeof Symbol == "function" && typeof Symbol.for == "function" ? (z = Symbol.for("graceful-fs.queue"), Tu = Symbol.for("graceful-fs.previous")) : (z = "___graceful-fs.queue", Tu = "___graceful-fs.previous");
-function Ut() {
+function Vt() {
 }
-function _e(u, e) {
+function xe(u, e) {
   Object.defineProperty(u, z, {
     get: function() {
       return e;
     }
   });
 }
-var Eu = Ut;
-xu.debuglog ? Eu = xu.debuglog("gfs4") : /\bgfs4\b/i.test(process.env.NODE_DEBUG || "") && (Eu = function() {
-  var u = xu.format.apply(xu, arguments);
+var Eu = Vt;
+_u.debuglog ? Eu = _u.debuglog("gfs4") : /\bgfs4\b/i.test(process.env.NODE_DEBUG || "") && (Eu = function() {
+  var u = _u.format.apply(_u, arguments);
   u = "GFS4: " + u.split(/\n/).join(`
 GFS4: `), console.error(u);
 });
 if (!N[z]) {
-  var Vt = Xu[z] || [];
-  _e(N, Vt), N.close = function(u) {
+  var Ht = Xu[z] || [];
+  xe(N, Ht), N.close = function(u) {
     function e(t, n) {
       return u.call(N, t, function(r) {
         r || me(), typeof n == "function" && n.apply(this, arguments);
@@ -320,21 +320,21 @@ if (!N[z]) {
       value: u
     }), e;
   }(N.closeSync), /\bgfs4\b/i.test(process.env.NODE_DEBUG || "") && process.on("exit", function() {
-    Eu(N[z]), bt.equal(N[z].length, 0);
+    Eu(N[z]), $t.equal(N[z].length, 0);
   });
 }
-Xu[z] || _e(Xu, N[z]);
-var pu = re(qt(N));
+Xu[z] || xe(Xu, N[z]);
+var pu = re(Ut(N));
 process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !N.__patched && (pu = re(N), N.__patched = !0);
 function re(u) {
-  Jt(u), u.gracefulify = re, u.createReadStream = R, u.createWriteStream = ru;
+  Wt(u), u.gracefulify = re, u.createReadStream = R, u.createWriteStream = ru;
   var e = u.readFile;
   u.readFile = t;
   function t(m, b, g) {
     return typeof b == "function" && (g = b, b = null), V(m, b, g);
     function V(H, W, I, j) {
-      return e(H, W, function($) {
-        $ && ($.code === "EMFILE" || $.code === "ENFILE") ? yu([V, [H, W, I], $, j || Date.now(), Date.now()]) : typeof I == "function" && I.apply(this, arguments);
+      return e(H, W, function(P) {
+        P && (P.code === "EMFILE" || P.code === "ENFILE") ? yu([V, [H, W, I], P, j || Date.now(), Date.now()]) : typeof I == "function" && I.apply(this, arguments);
       });
     }
   }
@@ -342,9 +342,9 @@ function re(u) {
   u.writeFile = r;
   function r(m, b, g, V) {
     return typeof g == "function" && (V = g, g = null), H(m, b, g, V);
-    function H(W, I, j, $, G) {
-      return n(W, I, j, function(_) {
-        _ && (_.code === "EMFILE" || _.code === "ENFILE") ? yu([H, [W, I, j, $], _, G || Date.now(), Date.now()]) : typeof $ == "function" && $.apply(this, arguments);
+    function H(W, I, j, P, G) {
+      return n(W, I, j, function(x) {
+        x && (x.code === "EMFILE" || x.code === "ENFILE") ? yu([H, [W, I, j, P], x, G || Date.now(), Date.now()]) : typeof P == "function" && P.apply(this, arguments);
       });
     }
   }
@@ -352,9 +352,9 @@ function re(u) {
   i && (u.appendFile = o);
   function o(m, b, g, V) {
     return typeof g == "function" && (V = g, g = null), H(m, b, g, V);
-    function H(W, I, j, $, G) {
-      return i(W, I, j, function(_) {
-        _ && (_.code === "EMFILE" || _.code === "ENFILE") ? yu([H, [W, I, j, $], _, G || Date.now(), Date.now()]) : typeof $ == "function" && $.apply(this, arguments);
+    function H(W, I, j, P, G) {
+      return i(W, I, j, function(x) {
+        x && (x.code === "EMFILE" || x.code === "ENFILE") ? yu([H, [W, I, j, P], x, G || Date.now(), Date.now()]) : typeof P == "function" && P.apply(this, arguments);
       });
     }
   }
@@ -362,53 +362,53 @@ function re(u) {
   a && (u.copyFile = F);
   function F(m, b, g, V) {
     return typeof g == "function" && (V = g, g = 0), H(m, b, g, V);
-    function H(W, I, j, $, G) {
-      return a(W, I, j, function(_) {
-        _ && (_.code === "EMFILE" || _.code === "ENFILE") ? yu([H, [W, I, j, $], _, G || Date.now(), Date.now()]) : typeof $ == "function" && $.apply(this, arguments);
+    function H(W, I, j, P, G) {
+      return a(W, I, j, function(x) {
+        x && (x.code === "EMFILE" || x.code === "ENFILE") ? yu([H, [W, I, j, P], x, G || Date.now(), Date.now()]) : typeof P == "function" && P.apply(this, arguments);
       });
     }
   }
-  var h = u.readdir;
+  var p = u.readdir;
   u.readdir = l;
   var c = /^v[0-5]\./;
   function l(m, b, g) {
     typeof b == "function" && (g = b, b = null);
-    var V = c.test(process.version) ? function(I, j, $, G) {
-      return h(I, H(
+    var V = c.test(process.version) ? function(I, j, P, G) {
+      return p(I, H(
         I,
         j,
-        $,
+        P,
         G
       ));
-    } : function(I, j, $, G) {
-      return h(I, j, H(
+    } : function(I, j, P, G) {
+      return p(I, j, H(
         I,
         j,
-        $,
+        P,
         G
       ));
     };
     return V(m, b, g);
-    function H(W, I, j, $) {
-      return function(G, _) {
+    function H(W, I, j, P) {
+      return function(G, x) {
         G && (G.code === "EMFILE" || G.code === "ENFILE") ? yu([
           V,
           [W, I, j],
           G,
-          $ || Date.now(),
+          P || Date.now(),
           Date.now()
-        ]) : (_ && _.sort && _.sort(), typeof j == "function" && j.call(this, G, _));
+        ]) : (x && x.sort && x.sort(), typeof j == "function" && j.call(this, G, x));
       };
     }
   }
   if (process.version.substr(0, 4) === "v0.8") {
-    var A = Wt(u);
+    var A = qt(u);
     s = A.ReadStream, v = A.WriteStream;
   }
   var C = u.ReadStream;
   C && (s.prototype = Object.create(C.prototype), s.prototype.open = w);
   var y = u.WriteStream;
-  y && (v.prototype = Object.create(y.prototype), v.prototype.open = P), Object.defineProperty(u, "ReadStream", {
+  y && (v.prototype = Object.create(y.prototype), v.prototype.open = $), Object.defineProperty(u, "ReadStream", {
     get: function() {
       return s;
     },
@@ -461,7 +461,7 @@ function re(u) {
   function v(m, b) {
     return this instanceof v ? (y.apply(this, arguments), this) : v.apply(Object.create(v.prototype), arguments);
   }
-  function P() {
+  function $() {
     var m = this;
     Vu(m.path, m.flags, m.mode, function(b, g) {
       b ? (m.destroy(), m.emit("error", b)) : (m.fd = g, m.emit("open", g));
@@ -473,13 +473,13 @@ function re(u) {
   function ru(m, b) {
     return new u.WriteStream(m, b);
   }
-  var St = u.open;
+  var wt = u.open;
   u.open = Vu;
   function Vu(m, b, g, V) {
     return typeof g == "function" && (V = g, g = null), H(m, b, g, V);
-    function H(W, I, j, $, G) {
-      return St(W, I, j, function(_, bi) {
-        _ && (_.code === "EMFILE" || _.code === "ENFILE") ? yu([H, [W, I, j, $], _, G || Date.now(), Date.now()]) : typeof $ == "function" && $.apply(this, arguments);
+    function H(W, I, j, P, G) {
+      return wt(W, I, j, function(x, $i) {
+        x && (x.code === "EMFILE" || x.code === "ENFILE") ? yu([H, [W, I, j, P], x, G || Date.now(), Date.now()]) : typeof P == "function" && P.apply(this, arguments);
       });
     }
   }
@@ -488,14 +488,14 @@ function re(u) {
 function yu(u) {
   Eu("ENQUEUE", u[0].name, u[1]), N[z].push(u), ie();
 }
-var _u;
+var xu;
 function me() {
   for (var u = Date.now(), e = 0; e < N[z].length; ++e)
     N[z][e].length > 2 && (N[z][e][3] = u, N[z][e][4] = u);
   ie();
 }
 function ie() {
-  if (clearTimeout(_u), _u = void 0, N[z].length !== 0) {
+  if (clearTimeout(xu), xu = void 0, N[z].length !== 0) {
     var u = N[z].shift(), e = u[0], t = u[1], n = u[2], r = u[3], i = u[4];
     if (r === void 0)
       Eu("RETRY", e.name, t), e.apply(null, t);
@@ -504,10 +504,10 @@ function ie() {
       var o = t.pop();
       typeof o == "function" && o.call(null, n);
     } else {
-      var a = Date.now() - i, F = Math.max(i - r, 1), h = Math.min(F * 1.2, 100);
-      a >= h ? (Eu("RETRY", e.name, t), e.apply(null, t.concat([r]))) : N[z].push(u);
+      var a = Date.now() - i, F = Math.max(i - r, 1), p = Math.min(F * 1.2, 100);
+      a >= p ? (Eu("RETRY", e.name, t), e.apply(null, t.concat([r]))) : N[z].push(u);
     }
-    _u === void 0 && (_u = setTimeout(ie, 0));
+    xu === void 0 && (xu = setTimeout(ie, 0));
   }
 }
 (function(u) {
@@ -555,8 +555,8 @@ function ie() {
     u[r] = e(t[r]);
   }), u.exists = function(r, i) {
     return typeof i == "function" ? t.exists(r, i) : new Promise((o) => t.exists(r, o));
-  }, u.read = function(r, i, o, a, F, h) {
-    return typeof h == "function" ? t.read(r, i, o, a, F, h) : new Promise((c, l) => {
+  }, u.read = function(r, i, o, a, F, p) {
+    return typeof p == "function" ? t.read(r, i, o, a, F, p) : new Promise((c, l) => {
       t.read(r, i, o, a, F, (A, C, y) => {
         if (A) return l(A);
         c({ bytesRead: C, buffer: y });
@@ -564,22 +564,22 @@ function ie() {
     });
   }, u.write = function(r, i, ...o) {
     return typeof o[o.length - 1] == "function" ? t.write(r, i, ...o) : new Promise((a, F) => {
-      t.write(r, i, ...o, (h, c, l) => {
-        if (h) return F(h);
+      t.write(r, i, ...o, (p, c, l) => {
+        if (p) return F(p);
         a({ bytesWritten: c, buffer: l });
       });
     });
   }, u.readv = function(r, i, ...o) {
     return typeof o[o.length - 1] == "function" ? t.readv(r, i, ...o) : new Promise((a, F) => {
-      t.readv(r, i, ...o, (h, c, l) => {
-        if (h) return F(h);
+      t.readv(r, i, ...o, (p, c, l) => {
+        if (p) return F(p);
         a({ bytesRead: c, buffers: l });
       });
     });
   }, u.writev = function(r, i, ...o) {
     return typeof o[o.length - 1] == "function" ? t.writev(r, i, ...o) : new Promise((a, F) => {
-      t.writev(r, i, ...o, (h, c, l) => {
-        if (h) return F(h);
+      t.writev(r, i, ...o, (p, c, l) => {
+        if (p) return F(p);
         a({ bytesWritten: c, buffers: l });
       });
     });
@@ -590,9 +590,9 @@ function ie() {
   );
 })(uu);
 var oe = {}, Ie = {};
-const Ht = p;
+const Gt = h;
 Ie.checkPath = function(e) {
-  if (process.platform === "win32" && /[<>:"|?*]/.test(e.replace(Ht.parse(e).root, ""))) {
+  if (process.platform === "win32" && /[<>:"|?*]/.test(e.replace(Gt.parse(e).root, ""))) {
     const n = new Error(`Path contains invalid characters: ${e}`);
     throw n.code = "EINVAL", n;
   }
@@ -609,7 +609,7 @@ oe.makeDirSync = (u, e) => (je(u), Ne.mkdirSync(u, {
   mode: Te(e),
   recursive: !0
 }));
-const Gt = J.fromPromise, { makeDir: zt, makeDirSync: Hu } = oe, Gu = Gt(zt);
+const zt = J.fromPromise, { makeDir: Yt, makeDirSync: Hu } = oe, Gu = zt(Yt);
 var nu = {
   mkdirs: Gu,
   mkdirsSync: Hu,
@@ -619,16 +619,16 @@ var nu = {
   ensureDir: Gu,
   ensureDirSync: Hu
 };
-const Yt = J.fromPromise, Le = uu;
-function Kt(u) {
+const Kt = J.fromPromise, Le = uu;
+function Qt(u) {
   return Le.access(u).then(() => !0).catch(() => !1);
 }
 var Au = {
-  pathExists: Yt(Kt),
+  pathExists: Kt(Qt),
   pathExistsSync: Le.existsSync
 };
-const mu = uu, Qt = J.fromPromise;
-async function Xt(u, e, t) {
+const mu = uu, Xt = J.fromPromise;
+async function Zt(u, e, t) {
   const n = await mu.open(u, "r+");
   let r = null;
   try {
@@ -643,16 +643,16 @@ async function Xt(u, e, t) {
   if (r)
     throw r;
 }
-function Zt(u, e, t) {
+function un(u, e, t) {
   const n = mu.openSync(u, "r+");
   return mu.futimesSync(n, e, t), mu.closeSync(n);
 }
 var Me = {
-  utimesMillis: Qt(Xt),
-  utimesMillisSync: Zt
+  utimesMillis: Xt(Zt),
+  utimesMillisSync: un
 };
-const du = uu, U = p, de = J.fromPromise;
-function un(u, e, t) {
+const du = uu, U = h, de = J.fromPromise;
+function en(u, e, t) {
   const n = t.dereference ? (r) => du.stat(r, { bigint: !0 }) : (r) => du.lstat(r, { bigint: !0 });
   return Promise.all([
     n(u),
@@ -662,7 +662,7 @@ function un(u, e, t) {
     })
   ]).then(([r, i]) => ({ srcStat: r, destStat: i }));
 }
-function en(u, e, t) {
+function tn(u, e, t) {
   let n;
   const r = t.dereference ? (o) => du.statSync(o, { bigint: !0 }) : (o) => du.lstatSync(o, { bigint: !0 }), i = r(u);
   try {
@@ -673,8 +673,8 @@ function en(u, e, t) {
   }
   return { srcStat: i, destStat: n };
 }
-async function tn(u, e, t, n) {
-  const { srcStat: r, destStat: i } = await un(u, e, n);
+async function nn(u, e, t, n) {
+  const { srcStat: r, destStat: i } = await en(u, e, n);
   if (i) {
     if (Ou(r, i)) {
       const o = U.basename(u), a = U.basename(e);
@@ -691,8 +691,8 @@ async function tn(u, e, t, n) {
     throw new Error(Ju(u, e, t));
   return { srcStat: r, destStat: i };
 }
-function nn(u, e, t, n) {
-  const { srcStat: r, destStat: i } = en(u, e, n);
+function rn(u, e, t, n) {
+  const { srcStat: r, destStat: i } = tn(u, e, n);
   if (i) {
     if (Ou(r, i)) {
       const o = U.basename(u), a = U.basename(e);
@@ -749,8 +749,8 @@ function Ju(u, e, t) {
 }
 var Bu = {
   // checkPaths
-  checkPaths: de(tn),
-  checkPathsSync: nn,
+  checkPaths: de(nn),
+  checkPathsSync: rn,
   // checkParent
   checkParentPaths: de(Re),
   checkParentPathsSync: Je,
@@ -758,8 +758,8 @@ var Bu = {
   isSrcSubdir: De,
   areIdentical: Ou
 };
-const K = uu, gu = p, { mkdirs: rn } = nu, { pathExists: on } = Au, { utimesMillis: Dn } = Me, bu = Bu;
-async function cn(u, e, t = {}) {
+const K = uu, gu = h, { mkdirs: on } = nu, { pathExists: Dn } = Au, { utimesMillis: cn } = Me, bu = Bu;
+async function an(u, e, t = {}) {
   typeof t == "function" && (t = { filter: t }), t.clobber = "clobber" in t ? !!t.clobber : !0, t.overwrite = "overwrite" in t ? !!t.overwrite : t.clobber, t.preserveTimestamps && process.arch === "ia32" && process.emitWarning(
     `Using the preserveTimestamps option in 32-bit node is not recommended;
 
@@ -770,19 +770,19 @@ async function cn(u, e, t = {}) {
   const { srcStat: n, destStat: r } = await bu.checkPaths(u, e, "copy", t);
   if (await bu.checkParentPaths(u, n, e, "copy"), !await We(u, e, t)) return;
   const o = gu.dirname(e);
-  await on(o) || await rn(o), await qe(r, u, e, t);
+  await Dn(o) || await on(o), await qe(r, u, e, t);
 }
 async function We(u, e, t) {
   return t.filter ? t.filter(u, e) : !0;
 }
 async function qe(u, e, t, n) {
   const i = await (n.dereference ? K.stat : K.lstat)(e);
-  if (i.isDirectory()) return ln(i, u, e, t, n);
-  if (i.isFile() || i.isCharacterDevice() || i.isBlockDevice()) return an(i, u, e, t, n);
-  if (i.isSymbolicLink()) return Fn(u, e, t, n);
+  if (i.isDirectory()) return Fn(i, u, e, t, n);
+  if (i.isFile() || i.isCharacterDevice() || i.isBlockDevice()) return sn(i, u, e, t, n);
+  if (i.isSymbolicLink()) return Cn(u, e, t, n);
   throw i.isSocket() ? new Error(`Cannot copy a socket file: ${e}`) : i.isFIFO() ? new Error(`Cannot copy a FIFO pipe: ${e}`) : new Error(`Unknown file: ${e}`);
 }
-async function an(u, e, t, n, r) {
+async function sn(u, e, t, n, r) {
   if (!e) return he(u, t, n, r);
   if (r.overwrite)
     return await K.unlink(n), he(u, t, n, r);
@@ -791,33 +791,33 @@ async function an(u, e, t, n, r) {
 }
 async function he(u, e, t, n) {
   if (await K.copyFile(e, t), n.preserveTimestamps) {
-    sn(u.mode) && await fn(t, u.mode);
+    fn(u.mode) && await ln(t, u.mode);
     const r = await K.stat(e);
-    await Dn(t, r.atime, r.mtime);
+    await cn(t, r.atime, r.mtime);
   }
   return K.chmod(t, u.mode);
 }
-function sn(u) {
+function fn(u) {
   return (u & 128) === 0;
 }
-function fn(u, e) {
+function ln(u, e) {
   return K.chmod(u, e | 128);
 }
-async function ln(u, e, t, n, r) {
+async function Fn(u, e, t, n, r) {
   e || await K.mkdir(n);
   const i = [];
   for await (const o of await K.opendir(t)) {
     const a = gu.join(t, o.name), F = gu.join(n, o.name);
     i.push(
-      We(a, F, r).then((h) => {
-        if (h)
+      We(a, F, r).then((p) => {
+        if (p)
           return bu.checkPaths(a, F, "copy", r).then(({ destStat: c }) => qe(c, a, F, r));
       })
     );
   }
   await Promise.all(i), e || await K.chmod(n, u.mode);
 }
-async function Fn(u, e, t, n) {
+async function Cn(u, e, t, n) {
   let r = await K.readlink(e);
   if (n.dereference && (r = gu.resolve(process.cwd(), r)), !u)
     return K.symlink(r, t);
@@ -834,9 +834,9 @@ async function Fn(u, e, t, n) {
     throw new Error(`Cannot overwrite '${i}' with '${r}'.`);
   return await K.unlink(t), K.symlink(r, t);
 }
-var Cn = cn;
-const X = pu, Pu = p, En = nu.mkdirsSync, An = Me.utimesMillisSync, $u = Bu;
-function yn(u, e, t) {
+var En = an;
+const X = pu, $u = h, An = nu.mkdirsSync, yn = Me.utimesMillisSync, Pu = Bu;
+function mn(u, e, t) {
   typeof t == "function" && (t = { filter: t }), t = t || {}, t.clobber = "clobber" in t ? !!t.clobber : !0, t.overwrite = "overwrite" in t ? !!t.overwrite : t.clobber, t.preserveTimestamps && process.arch === "ia32" && process.emitWarning(
     `Using the preserveTimestamps option in 32-bit node is not recommended;
 
@@ -844,50 +844,50 @@ function yn(u, e, t) {
     "Warning",
     "fs-extra-WARN0002"
   );
-  const { srcStat: n, destStat: r } = $u.checkPathsSync(u, e, "copy", t);
-  if ($u.checkParentPathsSync(u, n, e, "copy"), t.filter && !t.filter(u, e)) return;
-  const i = Pu.dirname(e);
-  return X.existsSync(i) || En(i), Ue(r, u, e, t);
+  const { srcStat: n, destStat: r } = Pu.checkPathsSync(u, e, "copy", t);
+  if (Pu.checkParentPathsSync(u, n, e, "copy"), t.filter && !t.filter(u, e)) return;
+  const i = $u.dirname(e);
+  return X.existsSync(i) || An(i), Ue(r, u, e, t);
 }
 function Ue(u, e, t, n) {
   const i = (n.dereference ? X.statSync : X.lstatSync)(e);
-  if (i.isDirectory()) return wn(i, u, e, t, n);
-  if (i.isFile() || i.isCharacterDevice() || i.isBlockDevice()) return mn(i, u, e, t, n);
-  if (i.isSymbolicLink()) return bn(u, e, t, n);
+  if (i.isDirectory()) return vn(i, u, e, t, n);
+  if (i.isFile() || i.isCharacterDevice() || i.isBlockDevice()) return dn(i, u, e, t, n);
+  if (i.isSymbolicLink()) return $n(u, e, t, n);
   throw i.isSocket() ? new Error(`Cannot copy a socket file: ${e}`) : i.isFIFO() ? new Error(`Cannot copy a FIFO pipe: ${e}`) : new Error(`Unknown file: ${e}`);
 }
-function mn(u, e, t, n, r) {
-  return e ? dn(u, t, n, r) : Ve(u, t, n, r);
+function dn(u, e, t, n, r) {
+  return e ? hn(u, t, n, r) : Ve(u, t, n, r);
 }
-function dn(u, e, t, n) {
+function hn(u, e, t, n) {
   if (n.overwrite)
     return X.unlinkSync(t), Ve(u, e, t, n);
   if (n.errorOnExist)
     throw new Error(`'${t}' already exists`);
 }
 function Ve(u, e, t, n) {
-  return X.copyFileSync(e, t), n.preserveTimestamps && hn(u.mode, e, t), ce(t, u.mode);
+  return X.copyFileSync(e, t), n.preserveTimestamps && pn(u.mode, e, t), ce(t, u.mode);
 }
-function hn(u, e, t) {
-  return pn(u) && Bn(t, u), Sn(e, t);
+function pn(u, e, t) {
+  return Bn(u) && Sn(t, u), wn(e, t);
 }
-function pn(u) {
+function Bn(u) {
   return (u & 128) === 0;
 }
-function Bn(u, e) {
+function Sn(u, e) {
   return ce(u, e | 128);
 }
 function ce(u, e) {
   return X.chmodSync(u, e);
 }
-function Sn(u, e) {
+function wn(u, e) {
   const t = X.statSync(u);
-  return An(e, t.atime, t.mtime);
+  return yn(e, t.atime, t.mtime);
 }
-function wn(u, e, t, n, r) {
-  return e ? He(t, n, r) : vn(u.mode, t, n, r);
+function vn(u, e, t, n, r) {
+  return e ? He(t, n, r) : gn(u.mode, t, n, r);
 }
-function vn(u, e, t, n) {
+function gn(u, e, t, n) {
   return X.mkdirSync(t), He(e, t, n), ce(t, u);
 }
 function He(u, e, t) {
@@ -895,20 +895,20 @@ function He(u, e, t) {
   try {
     let r;
     for (; (r = n.readSync()) !== null; )
-      gn(r.name, u, e, t);
+      bn(r.name, u, e, t);
   } finally {
     n.closeSync();
   }
 }
-function gn(u, e, t, n) {
-  const r = Pu.join(e, u), i = Pu.join(t, u);
+function bn(u, e, t, n) {
+  const r = $u.join(e, u), i = $u.join(t, u);
   if (n.filter && !n.filter(r, i)) return;
-  const { destStat: o } = $u.checkPathsSync(r, i, "copy", n);
+  const { destStat: o } = Pu.checkPathsSync(r, i, "copy", n);
   return Ue(o, r, i, n);
 }
-function bn(u, e, t, n) {
+function $n(u, e, t, n) {
   let r = X.readlinkSync(e);
-  if (n.dereference && (r = Pu.resolve(process.cwd(), r)), u) {
+  if (n.dereference && (r = $u.resolve(process.cwd(), r)), u) {
     let i;
     try {
       i = X.readlinkSync(t);
@@ -916,9 +916,9 @@ function bn(u, e, t, n) {
       if (o.code === "EINVAL" || o.code === "UNKNOWN") return X.symlinkSync(r, t);
       throw o;
     }
-    if (n.dereference && (i = Pu.resolve(process.cwd(), i)), $u.isSrcSubdir(r, i))
+    if (n.dereference && (i = $u.resolve(process.cwd(), i)), Pu.isSrcSubdir(r, i))
       throw new Error(`Cannot copy '${r}' to a subdirectory of itself, '${i}'.`);
-    if ($u.isSrcSubdir(i, r))
+    if (Pu.isSrcSubdir(i, r))
       throw new Error(`Cannot overwrite '${i}' with '${r}'.`);
     return Pn(r, t);
   } else
@@ -927,24 +927,24 @@ function bn(u, e, t, n) {
 function Pn(u, e) {
   return X.unlinkSync(e), X.symlinkSync(u, e);
 }
-var $n = yn;
-const kn = J.fromPromise;
+var kn = mn;
+const On = J.fromPromise;
 var ae = {
-  copy: kn(Cn),
-  copySync: $n
+  copy: On(En),
+  copySync: kn
 };
-const Ge = pu, On = J.fromCallback;
+const Ge = pu, _n = J.fromCallback;
 function xn(u, e) {
   Ge.rm(u, { recursive: !0, force: !0 }, e);
 }
-function _n(u) {
+function In(u) {
   Ge.rmSync(u, { recursive: !0, force: !0 });
 }
 var Wu = {
-  remove: On(xn),
-  removeSync: _n
+  remove: _n(xn),
+  removeSync: In
 };
-const In = J.fromPromise, ze = uu, Ye = p, Ke = nu, Qe = Wu, pe = In(async function(e) {
+const Nn = J.fromPromise, ze = uu, Ye = h, Ke = nu, Qe = Wu, pe = Nn(async function(e) {
   let t;
   try {
     t = await ze.readdir(e);
@@ -964,14 +964,14 @@ function Be(u) {
     t = Ye.join(u, t), Qe.removeSync(t);
   });
 }
-var Nn = {
+var jn = {
   emptyDirSync: Be,
   emptydirSync: Be,
   emptyDir: pe,
   emptydir: pe
 };
-const jn = J.fromPromise, Xe = p, ou = uu, Ze = nu;
-async function Tn(u) {
+const Tn = J.fromPromise, Xe = h, ou = uu, Ze = nu;
+async function Ln(u) {
   let e;
   try {
     e = await ou.stat(u);
@@ -991,7 +991,7 @@ async function Tn(u) {
   }
   n.isDirectory() ? await ou.writeFile(u, "") : await ou.readdir(t);
 }
-function Ln(u) {
+function Mn(u) {
   let e;
   try {
     e = ou.statSync(u);
@@ -1007,12 +1007,12 @@ function Ln(u) {
   }
   ou.writeFileSync(u, "");
 }
-var Mn = {
-  createFile: jn(Tn),
-  createFileSync: Ln
+var Rn = {
+  createFile: Tn(Ln),
+  createFileSync: Mn
 };
-const Rn = J.fromPromise, ut = p, su = uu, et = nu, { pathExists: Jn } = Au, { areIdentical: tt } = Bu;
-async function Wn(u, e) {
+const Jn = J.fromPromise, ut = h, su = uu, et = nu, { pathExists: Wn } = Au, { areIdentical: tt } = Bu;
+async function qn(u, e) {
   let t;
   try {
     t = await su.lstat(e);
@@ -1026,9 +1026,9 @@ async function Wn(u, e) {
   }
   if (t && tt(n, t)) return;
   const r = ut.dirname(e);
-  await Jn(r) || await et.mkdirs(r), await su.link(u, e);
+  await Wn(r) || await et.mkdirs(r), await su.link(u, e);
 }
-function qn(u, e) {
+function Un(u, e) {
   let t;
   try {
     t = su.lstatSync(e);
@@ -1043,12 +1043,12 @@ function qn(u, e) {
   const n = ut.dirname(e);
   return su.existsSync(n) || et.mkdirsSync(n), su.linkSync(u, e);
 }
-var Un = {
-  createLink: Rn(Wn),
-  createLinkSync: qn
+var Vn = {
+  createLink: Jn(qn),
+  createLinkSync: Un
 };
-const fu = p, wu = uu, { pathExists: Vn } = Au, Hn = J.fromPromise;
-async function Gn(u, e) {
+const fu = h, wu = uu, { pathExists: Hn } = Au, Gn = J.fromPromise;
+async function zn(u, e) {
   if (fu.isAbsolute(u)) {
     try {
       await wu.lstat(u);
@@ -1061,7 +1061,7 @@ async function Gn(u, e) {
     };
   }
   const t = fu.dirname(e), n = fu.join(t, u);
-  if (await Vn(n))
+  if (await Hn(n))
     return {
       toCwd: n,
       toDst: u
@@ -1076,7 +1076,7 @@ async function Gn(u, e) {
     toDst: fu.relative(t, u)
   };
 }
-function zn(u, e) {
+function Yn(u, e) {
   if (fu.isAbsolute(u)) {
     if (!wu.existsSync(u)) throw new Error("absolute srcpath does not exist");
     return {
@@ -1096,12 +1096,12 @@ function zn(u, e) {
     toDst: fu.relative(t, u)
   };
 }
-var Yn = {
-  symlinkPaths: Hn(Gn),
-  symlinkPathsSync: zn
+var Kn = {
+  symlinkPaths: Gn(zn),
+  symlinkPathsSync: Yn
 };
-const nt = uu, Kn = J.fromPromise;
-async function Qn(u, e) {
+const nt = uu, Qn = J.fromPromise;
+async function Xn(u, e) {
   if (e) return e;
   let t;
   try {
@@ -1111,7 +1111,7 @@ async function Qn(u, e) {
   }
   return t && t.isDirectory() ? "dir" : "file";
 }
-function Xn(u, e) {
+function Zn(u, e) {
   if (e) return e;
   let t;
   try {
@@ -1121,12 +1121,12 @@ function Xn(u, e) {
   }
   return t && t.isDirectory() ? "dir" : "file";
 }
-var Zn = {
-  symlinkType: Kn(Qn),
-  symlinkTypeSync: Xn
+var ur = {
+  symlinkType: Qn(Xn),
+  symlinkTypeSync: Zn
 };
-const ur = J.fromPromise, rt = p, tu = uu, { mkdirs: er, mkdirsSync: tr } = nu, { symlinkPaths: nr, symlinkPathsSync: rr } = Yn, { symlinkType: ir, symlinkTypeSync: or } = Zn, { pathExists: Dr } = Au, { areIdentical: it } = Bu;
-async function cr(u, e, t) {
+const er = J.fromPromise, rt = h, tu = uu, { mkdirs: tr, mkdirsSync: nr } = nu, { symlinkPaths: rr, symlinkPathsSync: ir } = Kn, { symlinkType: or, symlinkTypeSync: Dr } = ur, { pathExists: cr } = Au, { areIdentical: it } = Bu;
+async function ar(u, e, t) {
   let n;
   try {
     n = await tu.lstat(e);
@@ -1139,12 +1139,12 @@ async function cr(u, e, t) {
     ]);
     if (it(a, F)) return;
   }
-  const r = await nr(u, e);
+  const r = await rr(u, e);
   u = r.toDst;
-  const i = await ir(r.toCwd, t), o = rt.dirname(e);
-  return await Dr(o) || await er(o), tu.symlink(u, e, i);
+  const i = await or(r.toCwd, t), o = rt.dirname(e);
+  return await cr(o) || await tr(o), tu.symlink(u, e, i);
 }
-function ar(u, e, t) {
+function sr(u, e, t) {
   let n;
   try {
     n = tu.lstatSync(e);
@@ -1154,17 +1154,17 @@ function ar(u, e, t) {
     const a = tu.statSync(u), F = tu.statSync(e);
     if (it(a, F)) return;
   }
-  const r = rr(u, e);
-  u = r.toDst, t = or(r.toCwd, t);
+  const r = ir(u, e);
+  u = r.toDst, t = Dr(r.toCwd, t);
   const i = rt.dirname(e);
-  return tu.existsSync(i) || tr(i), tu.symlinkSync(u, e, t);
+  return tu.existsSync(i) || nr(i), tu.symlinkSync(u, e, t);
 }
-var sr = {
-  createSymlink: ur(cr),
-  createSymlinkSync: ar
-};
-const { createFile: Se, createFileSync: we } = Mn, { createLink: ve, createLinkSync: ge } = Un, { createSymlink: be, createSymlinkSync: Pe } = sr;
 var fr = {
+  createSymlink: er(ar),
+  createSymlinkSync: sr
+};
+const { createFile: Se, createFileSync: we } = Rn, { createLink: ve, createLinkSync: ge } = Vn, { createSymlink: be, createSymlinkSync: $e } = fr;
+var lr = {
   // file
   createFile: Se,
   createFileSync: we,
@@ -1177,19 +1177,19 @@ var fr = {
   ensureLinkSync: ge,
   // symlink
   createSymlink: be,
-  createSymlinkSync: Pe,
+  createSymlinkSync: $e,
   ensureSymlink: be,
-  ensureSymlinkSync: Pe
+  ensureSymlinkSync: $e
 };
-function lr(u, { EOL: e = `
+function Fr(u, { EOL: e = `
 `, finalEOL: t = !0, replacer: n = null, spaces: r } = {}) {
   const i = t ? e : "";
   return JSON.stringify(u, n, r).replace(/\n/g, e) + i;
 }
-function Fr(u) {
+function Cr(u) {
   return Buffer.isBuffer(u) && (u = u.toString("utf8")), u.replace(/^\uFEFF/, "");
 }
-var se = { stringify: lr, stripBom: Fr };
+var se = { stringify: Fr, stripBom: Cr };
 let hu;
 try {
   hu = pu;
@@ -1197,7 +1197,7 @@ try {
   hu = M;
 }
 const qu = J, { stringify: ot, stripBom: Dt } = se;
-async function Cr(u, e = {}) {
+async function Er(u, e = {}) {
   typeof e == "string" && (e = { encoding: e });
   const t = e.fs || hu, n = "throws" in e ? e.throws : !0;
   let r = await qu.fromCallback(t.readFile)(u, e);
@@ -1212,8 +1212,8 @@ async function Cr(u, e = {}) {
   }
   return i;
 }
-const Er = qu.fromPromise(Cr);
-function Ar(u, e = {}) {
+const Ar = qu.fromPromise(Er);
+function yr(u, e = {}) {
   typeof e == "string" && (e = { encoding: e });
   const t = e.fs || hu, n = "throws" in e ? e.throws : !0;
   try {
@@ -1225,105 +1225,105 @@ function Ar(u, e = {}) {
     return null;
   }
 }
-async function yr(u, e, t = {}) {
+async function mr(u, e, t = {}) {
   const n = t.fs || hu, r = ot(e, t);
   await qu.fromCallback(n.writeFile)(u, r, t);
 }
-const mr = qu.fromPromise(yr);
-function dr(u, e, t = {}) {
+const dr = qu.fromPromise(mr);
+function hr(u, e, t = {}) {
   const n = t.fs || hu, r = ot(e, t);
   return n.writeFileSync(u, r, t);
 }
-var hr = {
-  readFile: Er,
-  readFileSync: Ar,
-  writeFile: mr,
-  writeFileSync: dr
-};
-const Iu = hr;
 var pr = {
+  readFile: Ar,
+  readFileSync: yr,
+  writeFile: dr,
+  writeFileSync: hr
+};
+const Iu = pr;
+var Br = {
   // jsonfile exports
   readJson: Iu.readFile,
   readJsonSync: Iu.readFileSync,
   writeJson: Iu.writeFile,
   writeJsonSync: Iu.writeFileSync
 };
-const Br = J.fromPromise, Zu = uu, ct = p, at = nu, Sr = Au.pathExists;
-async function wr(u, e, t = "utf-8") {
+const Sr = J.fromPromise, Zu = uu, ct = h, at = nu, wr = Au.pathExists;
+async function vr(u, e, t = "utf-8") {
   const n = ct.dirname(u);
-  return await Sr(n) || await at.mkdirs(n), Zu.writeFile(u, e, t);
+  return await wr(n) || await at.mkdirs(n), Zu.writeFile(u, e, t);
 }
-function vr(u, ...e) {
+function gr(u, ...e) {
   const t = ct.dirname(u);
   Zu.existsSync(t) || at.mkdirsSync(t), Zu.writeFileSync(u, ...e);
 }
 var fe = {
-  outputFile: Br(wr),
-  outputFileSync: vr
+  outputFile: Sr(vr),
+  outputFileSync: gr
 };
-const { stringify: gr } = se, { outputFile: br } = fe;
+const { stringify: br } = se, { outputFile: $r } = fe;
 async function Pr(u, e, t = {}) {
-  const n = gr(e, t);
-  await br(u, n, t);
+  const n = br(e, t);
+  await $r(u, n, t);
 }
-var $r = Pr;
-const { stringify: kr } = se, { outputFileSync: Or } = fe;
+var kr = Pr;
+const { stringify: Or } = se, { outputFileSync: _r } = fe;
 function xr(u, e, t) {
-  const n = kr(e, t);
-  Or(u, n, t);
+  const n = Or(e, t);
+  _r(u, n, t);
 }
-var _r = xr;
-const Ir = J.fromPromise, Z = pr;
-Z.outputJson = Ir($r);
-Z.outputJsonSync = _r;
+var Ir = xr;
+const Nr = J.fromPromise, Z = Br;
+Z.outputJson = Nr(kr);
+Z.outputJsonSync = Ir;
 Z.outputJSON = Z.outputJson;
 Z.outputJSONSync = Z.outputJsonSync;
 Z.writeJSON = Z.writeJson;
 Z.writeJSONSync = Z.writeJsonSync;
 Z.readJSON = Z.readJson;
 Z.readJSONSync = Z.readJsonSync;
-var Nr = Z;
-const jr = uu, $e = p, { copy: Tr } = ae, { remove: st } = Wu, { mkdirp: Lr } = nu, { pathExists: Mr } = Au, ke = Bu;
-async function Rr(u, e, t = {}) {
+var jr = Z;
+const Tr = uu, Pe = h, { copy: Lr } = ae, { remove: st } = Wu, { mkdirp: Mr } = nu, { pathExists: Rr } = Au, ke = Bu;
+async function Jr(u, e, t = {}) {
   const n = t.overwrite || t.clobber || !1, { srcStat: r, isChangingCase: i = !1 } = await ke.checkPaths(u, e, "move", t);
   await ke.checkParentPaths(u, r, e, "move");
-  const o = $e.dirname(e);
-  return $e.parse(o).root !== o && await Lr(o), Jr(u, e, n, i);
+  const o = Pe.dirname(e);
+  return Pe.parse(o).root !== o && await Mr(o), Wr(u, e, n, i);
 }
-async function Jr(u, e, t, n) {
+async function Wr(u, e, t, n) {
   if (!n) {
     if (t)
       await st(e);
-    else if (await Mr(e))
+    else if (await Rr(e))
       throw new Error("dest already exists.");
   }
   try {
-    await jr.rename(u, e);
+    await Tr.rename(u, e);
   } catch (r) {
     if (r.code !== "EXDEV")
       throw r;
-    await Wr(u, e, t);
+    await qr(u, e, t);
   }
 }
-async function Wr(u, e, t) {
-  return await Tr(u, e, {
+async function qr(u, e, t) {
+  return await Lr(u, e, {
     overwrite: t,
     errorOnExist: !0,
     preserveTimestamps: !0
   }), st(u);
 }
-var qr = Rr;
-const ft = pu, ue = p, Ur = ae.copySync, lt = Wu.removeSync, Vr = nu.mkdirpSync, Oe = Bu;
-function Hr(u, e, t) {
+var Ur = Jr;
+const ft = pu, ue = h, Vr = ae.copySync, lt = Wu.removeSync, Hr = nu.mkdirpSync, Oe = Bu;
+function Gr(u, e, t) {
   t = t || {};
   const n = t.overwrite || t.clobber || !1, { srcStat: r, isChangingCase: i = !1 } = Oe.checkPathsSync(u, e, "move", t);
-  return Oe.checkParentPathsSync(u, r, e, "move"), Gr(e) || Vr(ue.dirname(e)), zr(u, e, n, i);
+  return Oe.checkParentPathsSync(u, r, e, "move"), zr(e) || Hr(ue.dirname(e)), Yr(u, e, n, i);
 }
-function Gr(u) {
+function zr(u) {
   const e = ue.dirname(u);
   return ue.parse(e).root === e;
 }
-function zr(u, e, t, n) {
+function Yr(u, e, t, n) {
   if (n) return zu(u, e, t);
   if (t)
     return lt(e), zu(u, e, t);
@@ -1335,46 +1335,46 @@ function zu(u, e, t) {
     ft.renameSync(u, e);
   } catch (n) {
     if (n.code !== "EXDEV") throw n;
-    return Yr(u, e, t);
+    return Kr(u, e, t);
   }
 }
-function Yr(u, e, t) {
-  return Ur(u, e, {
+function Kr(u, e, t) {
+  return Vr(u, e, {
     overwrite: t,
     errorOnExist: !0,
     preserveTimestamps: !0
   }), lt(u);
 }
-var Kr = Hr;
-const Qr = J.fromPromise;
-var Xr = {
-  move: Qr(qr),
-  moveSync: Kr
-}, Zr = {
+var Qr = Gr;
+const Xr = J.fromPromise;
+var Zr = {
+  move: Xr(Ur),
+  moveSync: Qr
+}, ui = {
   // Export promiseified graceful-fs:
   ...uu,
   // Export extra methods:
   ...ae,
-  ...Nn,
-  ...fr,
-  ...Nr,
+  ...jn,
+  ...lr,
+  ...jr,
   ...nu,
-  ...Xr,
+  ...Zr,
   ...fe,
   ...Au,
   ...Wu
 };
-const T = /* @__PURE__ */ Ot(Zr), Ft = kt(import.meta.url), ui = p.dirname(Ft), le = Ru.getPath("userData"), ei = p.join(le, "config.json"), ti = p.join(le, "info.json"), ni = p.join(le, "Mods"), x = {
+const T = /* @__PURE__ */ _t(ui), Ft = Ot(import.meta.url), ei = h.dirname(Ft), le = Ru.getPath("userData"), ti = h.join(le, "config.json"), ni = h.join(le, "info.json"), ri = h.join(le, "Mods"), _ = {
   __filename: Ft,
-  __dirname: ui,
-  CONFIG_PATH: ei,
-  INFO_PATH: ti,
-  MODS_DIR: ni
+  __dirname: ei,
+  CONFIG_PATH: ti,
+  INFO_PATH: ni,
+  MODS_DIR: ri
 };
-var ri = /[\u1680\u2000-\u200A\u202F\u205F\u3000]/, ii = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC03-\uDC37\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDF00-\uDF19]|\uD806[\uDCA0-\uDCDF\uDCFF\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE83\uDE86-\uDE89\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50\uDF93-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]/, oi = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0300-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u0483-\u0487\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u05D0-\u05EA\u05F0-\u05F2\u0610-\u061A\u0620-\u0669\u066E-\u06D3\u06D5-\u06DC\u06DF-\u06E8\u06EA-\u06FC\u06FF\u0710-\u074A\u074D-\u07B1\u07C0-\u07F5\u07FA\u0800-\u082D\u0840-\u085B\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u08D4-\u08E1\u08E3-\u0963\u0966-\u096F\u0971-\u0983\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BC-\u09C4\u09C7\u09C8\u09CB-\u09CE\u09D7\u09DC\u09DD\u09DF-\u09E3\u09E6-\u09F1\u09FC\u0A01-\u0A03\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A59-\u0A5C\u0A5E\u0A66-\u0A75\u0A81-\u0A83\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABC-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AD0\u0AE0-\u0AE3\u0AE6-\u0AEF\u0AF9-\u0AFF\u0B01-\u0B03\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3C-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B56\u0B57\u0B5C\u0B5D\u0B5F-\u0B63\u0B66-\u0B6F\u0B71\u0B82\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD0\u0BD7\u0BE6-\u0BEF\u0C00-\u0C03\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C58-\u0C5A\u0C60-\u0C63\u0C66-\u0C6F\u0C80-\u0C83\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBC-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CDE\u0CE0-\u0CE3\u0CE6-\u0CEF\u0CF1\u0CF2\u0D00-\u0D03\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D44\u0D46-\u0D48\u0D4A-\u0D4E\u0D54-\u0D57\u0D5F-\u0D63\u0D66-\u0D6F\u0D7A-\u0D7F\u0D82\u0D83\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E01-\u0E3A\u0E40-\u0E4E\u0E50-\u0E59\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB9\u0EBB-\u0EBD\u0EC0-\u0EC4\u0EC6\u0EC8-\u0ECD\u0ED0-\u0ED9\u0EDC-\u0EDF\u0F00\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E-\u0F47\u0F49-\u0F6C\u0F71-\u0F84\u0F86-\u0F97\u0F99-\u0FBC\u0FC6\u1000-\u1049\u1050-\u109D\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u135D-\u135F\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1714\u1720-\u1734\u1740-\u1753\u1760-\u176C\u176E-\u1770\u1772\u1773\u1780-\u17D3\u17D7\u17DC\u17DD\u17E0-\u17E9\u180B-\u180D\u1810-\u1819\u1820-\u1877\u1880-\u18AA\u18B0-\u18F5\u1900-\u191E\u1920-\u192B\u1930-\u193B\u1946-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u19D0-\u19D9\u1A00-\u1A1B\u1A20-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AA7\u1AB0-\u1ABD\u1B00-\u1B4B\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1BF3\u1C00-\u1C37\u1C40-\u1C49\u1C4D-\u1C7D\u1C80-\u1C88\u1CD0-\u1CD2\u1CD4-\u1CF9\u1D00-\u1DF9\u1DFB-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u203F\u2040\u2054\u2071\u207F\u2090-\u209C\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D7F-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2DE0-\u2DFF\u2E2F\u3005-\u3007\u3021-\u302F\u3031-\u3035\u3038-\u303C\u3041-\u3096\u3099\u309A\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA62B\uA640-\uA66F\uA674-\uA67D\uA67F-\uA6F1\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA827\uA840-\uA873\uA880-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F7\uA8FB\uA8FD\uA900-\uA92D\uA930-\uA953\uA960-\uA97C\uA980-\uA9C0\uA9CF-\uA9D9\uA9E0-\uA9FE\uAA00-\uAA36\uAA40-\uAA4D\uAA50-\uAA59\uAA60-\uAA76\uAA7A-\uAAC2\uAADB-\uAADD\uAAE0-\uAAEF\uAAF2-\uAAF6\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABEA\uABEC\uABED\uABF0-\uABF9\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFE70-\uFE74\uFE76-\uFEFC\uFF10-\uFF19\uFF21-\uFF3A\uFF3F\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDDFD\uDE80-\uDE9C\uDEA0-\uDED0\uDEE0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF7A\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCA0-\uDCA9\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00-\uDE03\uDE05\uDE06\uDE0C-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE38-\uDE3A\uDE3F\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE6\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC00-\uDC46\uDC66-\uDC6F\uDC7F-\uDCBA\uDCD0-\uDCE8\uDCF0-\uDCF9\uDD00-\uDD34\uDD36-\uDD3F\uDD50-\uDD73\uDD76\uDD80-\uDDC4\uDDCA-\uDDCC\uDDD0-\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE37\uDE3E\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEEA\uDEF0-\uDEF9\uDF00-\uDF03\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3C-\uDF44\uDF47\uDF48\uDF4B-\uDF4D\uDF50\uDF57\uDF5D-\uDF63\uDF66-\uDF6C\uDF70-\uDF74]|\uD805[\uDC00-\uDC4A\uDC50-\uDC59\uDC80-\uDCC5\uDCC7\uDCD0-\uDCD9\uDD80-\uDDB5\uDDB8-\uDDC0\uDDD8-\uDDDD\uDE00-\uDE40\uDE44\uDE50-\uDE59\uDE80-\uDEB7\uDEC0-\uDEC9\uDF00-\uDF19\uDF1D-\uDF2B\uDF30-\uDF39]|\uD806[\uDCA0-\uDCE9\uDCFF\uDE00-\uDE3E\uDE47\uDE50-\uDE83\uDE86-\uDE99\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC36\uDC38-\uDC40\uDC50-\uDC59\uDC72-\uDC8F\uDC92-\uDCA7\uDCA9-\uDCB6\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD36\uDD3A\uDD3C\uDD3D\uDD3F-\uDD47\uDD50-\uDD59]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE60-\uDE69\uDED0-\uDEED\uDEF0-\uDEF4\uDF00-\uDF36\uDF40-\uDF43\uDF50-\uDF59\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50-\uDF7E\uDF8F-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99\uDC9D\uDC9E]|\uD834[\uDD65-\uDD69\uDD6D-\uDD72\uDD7B-\uDD82\uDD85-\uDD8B\uDDAA-\uDDAD\uDE42-\uDE44]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB\uDFCE-\uDFFF]|\uD836[\uDE00-\uDE36\uDE3B-\uDE6C\uDE75\uDE84\uDE9B-\uDE9F\uDEA1-\uDEAF]|\uD838[\uDC00-\uDC06\uDC08-\uDC18\uDC1B-\uDC21\uDC23\uDC24\uDC26-\uDC2A]|\uD83A[\uDC00-\uDCC4\uDCD0-\uDCD6\uDD00-\uDD4A\uDD50-\uDD59]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uDB40[\uDD00-\uDDEF]/, Yu = {
-  Space_Separator: ri,
-  ID_Start: ii,
-  ID_Continue: oi
+var ii = /[\u1680\u2000-\u200A\u202F\u205F\u3000]/, oi = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u09FC\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C60\u0C61\u0C80\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D54-\u0D56\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u1884\u1887-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1C80-\u1C88\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6EF\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDE80-\uDE9C\uDEA0-\uDED0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF75\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00\uDE10-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE4\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC03-\uDC37\uDC83-\uDCAF\uDCD0-\uDCE8\uDD03-\uDD26\uDD50-\uDD72\uDD76\uDD83-\uDDB2\uDDC1-\uDDC4\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE2B\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEDE\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3D\uDF50\uDF5D-\uDF61]|\uD805[\uDC00-\uDC34\uDC47-\uDC4A\uDC80-\uDCAF\uDCC4\uDCC5\uDCC7\uDD80-\uDDAE\uDDD8-\uDDDB\uDE00-\uDE2F\uDE44\uDE80-\uDEAA\uDF00-\uDF19]|\uD806[\uDCA0-\uDCDF\uDCFF\uDE00\uDE0B-\uDE32\uDE3A\uDE50\uDE5C-\uDE83\uDE86-\uDE89\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC2E\uDC40\uDC72-\uDC8F\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD30\uDD46]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDED0-\uDEED\uDF00-\uDF2F\uDF40-\uDF43\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50\uDF93-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB]|\uD83A[\uDC00-\uDCC4\uDD00-\uDD43]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]/, Di = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0300-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u0483-\u0487\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u05D0-\u05EA\u05F0-\u05F2\u0610-\u061A\u0620-\u0669\u066E-\u06D3\u06D5-\u06DC\u06DF-\u06E8\u06EA-\u06FC\u06FF\u0710-\u074A\u074D-\u07B1\u07C0-\u07F5\u07FA\u0800-\u082D\u0840-\u085B\u0860-\u086A\u08A0-\u08B4\u08B6-\u08BD\u08D4-\u08E1\u08E3-\u0963\u0966-\u096F\u0971-\u0983\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BC-\u09C4\u09C7\u09C8\u09CB-\u09CE\u09D7\u09DC\u09DD\u09DF-\u09E3\u09E6-\u09F1\u09FC\u0A01-\u0A03\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A59-\u0A5C\u0A5E\u0A66-\u0A75\u0A81-\u0A83\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABC-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AD0\u0AE0-\u0AE3\u0AE6-\u0AEF\u0AF9-\u0AFF\u0B01-\u0B03\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3C-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B56\u0B57\u0B5C\u0B5D\u0B5F-\u0B63\u0B66-\u0B6F\u0B71\u0B82\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD0\u0BD7\u0BE6-\u0BEF\u0C00-\u0C03\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C58-\u0C5A\u0C60-\u0C63\u0C66-\u0C6F\u0C80-\u0C83\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBC-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CDE\u0CE0-\u0CE3\u0CE6-\u0CEF\u0CF1\u0CF2\u0D00-\u0D03\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D44\u0D46-\u0D48\u0D4A-\u0D4E\u0D54-\u0D57\u0D5F-\u0D63\u0D66-\u0D6F\u0D7A-\u0D7F\u0D82\u0D83\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DE6-\u0DEF\u0DF2\u0DF3\u0E01-\u0E3A\u0E40-\u0E4E\u0E50-\u0E59\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB9\u0EBB-\u0EBD\u0EC0-\u0EC4\u0EC6\u0EC8-\u0ECD\u0ED0-\u0ED9\u0EDC-\u0EDF\u0F00\u0F18\u0F19\u0F20-\u0F29\u0F35\u0F37\u0F39\u0F3E-\u0F47\u0F49-\u0F6C\u0F71-\u0F84\u0F86-\u0F97\u0F99-\u0FBC\u0FC6\u1000-\u1049\u1050-\u109D\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u135D-\u135F\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16EE-\u16F8\u1700-\u170C\u170E-\u1714\u1720-\u1734\u1740-\u1753\u1760-\u176C\u176E-\u1770\u1772\u1773\u1780-\u17D3\u17D7\u17DC\u17DD\u17E0-\u17E9\u180B-\u180D\u1810-\u1819\u1820-\u1877\u1880-\u18AA\u18B0-\u18F5\u1900-\u191E\u1920-\u192B\u1930-\u193B\u1946-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u19D0-\u19D9\u1A00-\u1A1B\u1A20-\u1A5E\u1A60-\u1A7C\u1A7F-\u1A89\u1A90-\u1A99\u1AA7\u1AB0-\u1ABD\u1B00-\u1B4B\u1B50-\u1B59\u1B6B-\u1B73\u1B80-\u1BF3\u1C00-\u1C37\u1C40-\u1C49\u1C4D-\u1C7D\u1C80-\u1C88\u1CD0-\u1CD2\u1CD4-\u1CF9\u1D00-\u1DF9\u1DFB-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u203F\u2040\u2054\u2071\u207F\u2090-\u209C\u20D0-\u20DC\u20E1\u20E5-\u20F0\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2160-\u2188\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D7F-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2DE0-\u2DFF\u2E2F\u3005-\u3007\u3021-\u302F\u3031-\u3035\u3038-\u303C\u3041-\u3096\u3099\u309A\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312E\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FEA\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA62B\uA640-\uA66F\uA674-\uA67D\uA67F-\uA6F1\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AE\uA7B0-\uA7B7\uA7F7-\uA827\uA840-\uA873\uA880-\uA8C5\uA8D0-\uA8D9\uA8E0-\uA8F7\uA8FB\uA8FD\uA900-\uA92D\uA930-\uA953\uA960-\uA97C\uA980-\uA9C0\uA9CF-\uA9D9\uA9E0-\uA9FE\uAA00-\uAA36\uAA40-\uAA4D\uAA50-\uAA59\uAA60-\uAA76\uAA7A-\uAAC2\uAADB-\uAADD\uAAE0-\uAAEF\uAAF2-\uAAF6\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABEA\uABEC\uABED\uABF0-\uABF9\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE00-\uFE0F\uFE20-\uFE2F\uFE33\uFE34\uFE4D-\uFE4F\uFE70-\uFE74\uFE76-\uFEFC\uFF10-\uFF19\uFF21-\uFF3A\uFF3F\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC]|\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C\uDC3D\uDC3F-\uDC4D\uDC50-\uDC5D\uDC80-\uDCFA\uDD40-\uDD74\uDDFD\uDE80-\uDE9C\uDEA0-\uDED0\uDEE0\uDF00-\uDF1F\uDF2D-\uDF4A\uDF50-\uDF7A\uDF80-\uDF9D\uDFA0-\uDFC3\uDFC8-\uDFCF\uDFD1-\uDFD5]|\uD801[\uDC00-\uDC9D\uDCA0-\uDCA9\uDCB0-\uDCD3\uDCD8-\uDCFB\uDD00-\uDD27\uDD30-\uDD63\uDE00-\uDF36\uDF40-\uDF55\uDF60-\uDF67]|\uD802[\uDC00-\uDC05\uDC08\uDC0A-\uDC35\uDC37\uDC38\uDC3C\uDC3F-\uDC55\uDC60-\uDC76\uDC80-\uDC9E\uDCE0-\uDCF2\uDCF4\uDCF5\uDD00-\uDD15\uDD20-\uDD39\uDD80-\uDDB7\uDDBE\uDDBF\uDE00-\uDE03\uDE05\uDE06\uDE0C-\uDE13\uDE15-\uDE17\uDE19-\uDE33\uDE38-\uDE3A\uDE3F\uDE60-\uDE7C\uDE80-\uDE9C\uDEC0-\uDEC7\uDEC9-\uDEE6\uDF00-\uDF35\uDF40-\uDF55\uDF60-\uDF72\uDF80-\uDF91]|\uD803[\uDC00-\uDC48\uDC80-\uDCB2\uDCC0-\uDCF2]|\uD804[\uDC00-\uDC46\uDC66-\uDC6F\uDC7F-\uDCBA\uDCD0-\uDCE8\uDCF0-\uDCF9\uDD00-\uDD34\uDD36-\uDD3F\uDD50-\uDD73\uDD76\uDD80-\uDDC4\uDDCA-\uDDCC\uDDD0-\uDDDA\uDDDC\uDE00-\uDE11\uDE13-\uDE37\uDE3E\uDE80-\uDE86\uDE88\uDE8A-\uDE8D\uDE8F-\uDE9D\uDE9F-\uDEA8\uDEB0-\uDEEA\uDEF0-\uDEF9\uDF00-\uDF03\uDF05-\uDF0C\uDF0F\uDF10\uDF13-\uDF28\uDF2A-\uDF30\uDF32\uDF33\uDF35-\uDF39\uDF3C-\uDF44\uDF47\uDF48\uDF4B-\uDF4D\uDF50\uDF57\uDF5D-\uDF63\uDF66-\uDF6C\uDF70-\uDF74]|\uD805[\uDC00-\uDC4A\uDC50-\uDC59\uDC80-\uDCC5\uDCC7\uDCD0-\uDCD9\uDD80-\uDDB5\uDDB8-\uDDC0\uDDD8-\uDDDD\uDE00-\uDE40\uDE44\uDE50-\uDE59\uDE80-\uDEB7\uDEC0-\uDEC9\uDF00-\uDF19\uDF1D-\uDF2B\uDF30-\uDF39]|\uD806[\uDCA0-\uDCE9\uDCFF\uDE00-\uDE3E\uDE47\uDE50-\uDE83\uDE86-\uDE99\uDEC0-\uDEF8]|\uD807[\uDC00-\uDC08\uDC0A-\uDC36\uDC38-\uDC40\uDC50-\uDC59\uDC72-\uDC8F\uDC92-\uDCA7\uDCA9-\uDCB6\uDD00-\uDD06\uDD08\uDD09\uDD0B-\uDD36\uDD3A\uDD3C\uDD3D\uDD3F-\uDD47\uDD50-\uDD59]|\uD808[\uDC00-\uDF99]|\uD809[\uDC00-\uDC6E\uDC80-\uDD43]|[\uD80C\uD81C-\uD820\uD840-\uD868\uD86A-\uD86C\uD86F-\uD872\uD874-\uD879][\uDC00-\uDFFF]|\uD80D[\uDC00-\uDC2E]|\uD811[\uDC00-\uDE46]|\uD81A[\uDC00-\uDE38\uDE40-\uDE5E\uDE60-\uDE69\uDED0-\uDEED\uDEF0-\uDEF4\uDF00-\uDF36\uDF40-\uDF43\uDF50-\uDF59\uDF63-\uDF77\uDF7D-\uDF8F]|\uD81B[\uDF00-\uDF44\uDF50-\uDF7E\uDF8F-\uDF9F\uDFE0\uDFE1]|\uD821[\uDC00-\uDFEC]|\uD822[\uDC00-\uDEF2]|\uD82C[\uDC00-\uDD1E\uDD70-\uDEFB]|\uD82F[\uDC00-\uDC6A\uDC70-\uDC7C\uDC80-\uDC88\uDC90-\uDC99\uDC9D\uDC9E]|\uD834[\uDD65-\uDD69\uDD6D-\uDD72\uDD7B-\uDD82\uDD85-\uDD8B\uDDAA-\uDDAD\uDE42-\uDE44]|\uD835[\uDC00-\uDC54\uDC56-\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDEA5\uDEA8-\uDEC0\uDEC2-\uDEDA\uDEDC-\uDEFA\uDEFC-\uDF14\uDF16-\uDF34\uDF36-\uDF4E\uDF50-\uDF6E\uDF70-\uDF88\uDF8A-\uDFA8\uDFAA-\uDFC2\uDFC4-\uDFCB\uDFCE-\uDFFF]|\uD836[\uDE00-\uDE36\uDE3B-\uDE6C\uDE75\uDE84\uDE9B-\uDE9F\uDEA1-\uDEAF]|\uD838[\uDC00-\uDC06\uDC08-\uDC18\uDC1B-\uDC21\uDC23\uDC24\uDC26-\uDC2A]|\uD83A[\uDC00-\uDCC4\uDCD0-\uDCD6\uDD00-\uDD4A\uDD50-\uDD59]|\uD83B[\uDE00-\uDE03\uDE05-\uDE1F\uDE21\uDE22\uDE24\uDE27\uDE29-\uDE32\uDE34-\uDE37\uDE39\uDE3B\uDE42\uDE47\uDE49\uDE4B\uDE4D-\uDE4F\uDE51\uDE52\uDE54\uDE57\uDE59\uDE5B\uDE5D\uDE5F\uDE61\uDE62\uDE64\uDE67-\uDE6A\uDE6C-\uDE72\uDE74-\uDE77\uDE79-\uDE7C\uDE7E\uDE80-\uDE89\uDE8B-\uDE9B\uDEA1-\uDEA3\uDEA5-\uDEA9\uDEAB-\uDEBB]|\uD869[\uDC00-\uDED6\uDF00-\uDFFF]|\uD86D[\uDC00-\uDF34\uDF40-\uDFFF]|\uD86E[\uDC00-\uDC1D\uDC20-\uDFFF]|\uD873[\uDC00-\uDEA1\uDEB0-\uDFFF]|\uD87A[\uDC00-\uDFE0]|\uD87E[\uDC00-\uDE1D]|\uDB40[\uDD00-\uDDEF]/, Yu = {
+  Space_Separator: ii,
+  ID_Start: oi,
+  ID_Continue: Di
 }, L = {
   isSpaceSeparator(u) {
     return typeof u == "string" && Yu.Space_Separator.test(u);
@@ -1393,10 +1393,10 @@ var ri = /[\u1680\u2000-\u200A\u202F\u205F\u3000]/, ii = /[\xAA\xB5\xBA\xC0-\xD6
   }
 };
 let ee, Q, Du, Lu, lu, eu, q, Fe, vu;
-var Di = function(e, t) {
+var ci = function(e, t) {
   ee = String(e), Q = "start", Du = [], Lu = 0, lu = 1, eu = 0, q = void 0, Fe = void 0, vu = void 0;
   do
-    q = ci(), fi[Q]();
+    q = ai(), li[Q]();
   while (q.type !== "eof");
   return typeof t == "function" ? te({ "": vu }, "", t) : vu;
 };
@@ -1426,7 +1426,7 @@ function te(u, e, t) {
   return t.call(u, e, n);
 }
 let B, d, Su, iu, S;
-function ci() {
+function ai() {
   for (B = "default", d = "", Su = !1, iu = 1; ; ) {
     S = cu();
     const u = Ct[B]();
@@ -1573,7 +1573,7 @@ const Ct = {
         break;
       default:
         if (!L.isIdStartChar(u))
-          throw xe();
+          throw _e();
         break;
     }
     d += u, B = "identifierName";
@@ -1609,7 +1609,7 @@ const Ct = {
         break;
       default:
         if (!L.isIdContinueChar(u))
-          throw xe();
+          throw _e();
         break;
     }
     d += u, B = "identifierName";
@@ -1749,7 +1749,7 @@ const Ct = {
   string() {
     switch (S) {
       case "\\":
-        D(), d += ai();
+        D(), d += si();
         return;
       case '"':
         if (Su)
@@ -1767,7 +1767,7 @@ const Ct = {
         throw O(D());
       case "\u2028":
       case "\u2029":
-        li(S);
+        Fi(S);
         break;
       case void 0:
         throw O(D());
@@ -1852,7 +1852,7 @@ function Fu(u) {
     D();
   }
 }
-function ai() {
+function si() {
   switch (cu()) {
     case "b":
       return D(), "\b";
@@ -1872,7 +1872,7 @@ function ai() {
         throw O(D());
       return "\0";
     case "x":
-      return D(), si();
+      return D(), fi();
     case "u":
       return D(), ne();
     case `
@@ -1898,7 +1898,7 @@ function ai() {
   }
   return D();
 }
-function si() {
+function fi() {
   let u = "", e = cu();
   if (!L.isHexDigit(e) || (u += D(), e = cu(), !L.isHexDigit(e)))
     throw O(D());
@@ -1914,7 +1914,7 @@ function ne() {
   }
   return String.fromCodePoint(parseInt(u, 16));
 }
-const fi = {
+const li = {
   start() {
     if (q.type === "eof")
       throw Cu();
@@ -2026,10 +2026,10 @@ function O(u) {
 function Cu() {
   return Mu(`JSON5: invalid end of input at ${lu}:${eu}`);
 }
-function xe() {
+function _e() {
   return eu -= 5, Mu(`JSON5: invalid identifier character at ${lu}:${eu}`);
 }
-function li(u) {
+function Fi(u) {
   console.warn(`JSON5: '${Et(u)}' in strings is not valid ECMAScript; consider escaping`);
 }
 function Et(u) {
@@ -2059,10 +2059,10 @@ function Mu(u) {
   const e = new SyntaxError(u);
   return e.lineNumber = lu, e.columnNumber = eu, e;
 }
-var Fi = function(e, t, n) {
+var Ci = function(e, t, n) {
   const r = [];
-  let i = "", o, a, F = "", h;
-  if (t != null && typeof t == "object" && !Array.isArray(t) && (n = t.space, h = t.quote, t = t.replacer), typeof t == "function")
+  let i = "", o, a, F = "", p;
+  if (t != null && typeof t == "object" && !Array.isArray(t) && (n = t.space, p = t.quote, t = t.replacer), typeof t == "function")
     a = t;
   else if (Array.isArray(t)) {
     o = [];
@@ -2108,15 +2108,15 @@ var Fi = function(e, t, n) {
       "\u2029": "\\u2029"
     };
     let w = "";
-    for (let P = 0; P < f.length; P++) {
-      const R = f[P];
+    for (let $ = 0; $ < f.length; $++) {
+      const R = f[$];
       switch (R) {
         case "'":
         case '"':
           E[R]++, w += R;
           continue;
         case "\0":
-          if (L.isDigit(f[P + 1])) {
+          if (L.isDigit(f[$ + 1])) {
             w += "\\x00";
             continue;
           }
@@ -2132,7 +2132,7 @@ var Fi = function(e, t, n) {
       }
       w += R;
     }
-    const v = h || Object.keys(E).reduce((P, R) => E[P] < E[R] ? P : R);
+    const v = p || Object.keys(E).reduce(($, R) => E[$] < E[R] ? $ : R);
     return w = w.replace(new RegExp(v, "g"), s[v]), v + w + v;
   }
   function A(f) {
@@ -2142,10 +2142,10 @@ var Fi = function(e, t, n) {
     let E = i;
     i = i + F;
     let s = o || Object.keys(f), w = [];
-    for (const P of s) {
-      const R = c(P, f);
+    for (const $ of s) {
+      const R = c($, f);
       if (R !== void 0) {
-        let ru = C(P) + ":";
+        let ru = C($) + ":";
         F !== "" && (ru += " "), ru += R, w.push(ru);
       }
     }
@@ -2153,14 +2153,14 @@ var Fi = function(e, t, n) {
     if (w.length === 0)
       v = "{}";
     else {
-      let P;
+      let $;
       if (F === "")
-        P = w.join(","), v = "{" + P + "}";
+        $ = w.join(","), v = "{" + $ + "}";
       else {
         let R = `,
 ` + i;
-        P = w.join(R), v = `{
-` + i + P + `,
+        $ = w.join(R), v = `{
+` + i + $ + `,
 ` + E + "}";
       }
     }
@@ -2185,8 +2185,8 @@ var Fi = function(e, t, n) {
     i = i + F;
     let s = [];
     for (let v = 0; v < f.length; v++) {
-      const P = c(String(v), f);
-      s.push(P !== void 0 ? P : "null");
+      const $ = c(String(v), f);
+      s.push($ !== void 0 ? $ : "null");
     }
     let w;
     if (s.length === 0)
@@ -2195,27 +2195,27 @@ var Fi = function(e, t, n) {
       w = "[" + s.join(",") + "]";
     else {
       let v = `,
-` + i, P = s.join(v);
+` + i, $ = s.join(v);
       w = `[
-` + i + P + `,
+` + i + $ + `,
 ` + E + "]";
     }
     return r.pop(), i = E, w;
   }
 };
-const Ci = {
-  parse: Di,
-  stringify: Fi
+const Ei = {
+  parse: ci,
+  stringify: Ci
 };
-var Ei = Ci;
-const Ai = ["ConsoleCommands", "SaveBackup"];
+var Ai = Ei;
+const yi = ["ConsoleCommands", "SaveBackup"];
 function Ce(u, e = {}) {
   if (!M.existsSync(u)) return e;
   const t = M.readdirSync(u, { withFileTypes: !0 });
   for (const n of t) {
-    const r = p.join(u, n.name);
+    const r = h.join(u, n.name);
     if (!n.isDirectory()) continue;
-    if (Ai.includes(n.name)) {
+    if (yi.includes(n.name)) {
       e[n.name] = {
         uniqueId: n.name,
         // UniqueID 대신 폴더명을 UniqueID처럼 사용
@@ -2228,7 +2228,7 @@ function Ce(u, e = {}) {
       };
       continue;
     }
-    const i = p.join(r, "manifest.json"), o = ku(i);
+    const i = h.join(r, "manifest.json"), o = ku(i);
     o ? e[o.UniqueID] = {
       uniqueId: o.UniqueID,
       name: o.Name ?? n.name,
@@ -2239,12 +2239,12 @@ function Ce(u, e = {}) {
   return e;
 }
 function Ee(u) {
-  M.existsSync(x.CONFIG_PATH) || M.mkdirSync(x.CONFIG_PATH);
-  const e = JSON.parse(M.readFileSync(x.CONFIG_PATH, "utf-8"));
+  M.existsSync(_.CONFIG_PATH) || M.mkdirSync(_.CONFIG_PATH);
+  const e = JSON.parse(M.readFileSync(_.CONFIG_PATH, "utf-8"));
   if (!u) return e;
   let t = e[u];
   if (!t) {
-    const n = Ce(x.MODS_DIR);
+    const n = Ce(_.MODS_DIR);
     t = {};
     for (const [r, i] of Object.entries(n))
       t[r] = {
@@ -2252,38 +2252,38 @@ function Ee(u) {
         enabled: i.enabled
       };
   }
-  return di(t);
+  return hi(t);
 }
-function yi(u, e) {
-  const t = mi(
+function mi(u, e) {
+  const t = di(
     u,
-    x.MODS_DIR,
+    _.MODS_DIR,
     e
   ), r = {
     ...Uu(),
     ...t
   };
   M.writeFileSync(
-    x.CONFIG_PATH,
+    _.CONFIG_PATH,
     JSON.stringify(r, null, 2),
     "utf-8"
   );
 }
-function mi(u, e, t) {
+function di(u, e, t) {
   const n = {};
   function r(i, o) {
     for (const a of Object.keys(i)) {
-      const F = p.join(o, a), h = p.join(F, "manifest.json");
-      if (M.existsSync(h))
+      const F = h.join(o, a), p = h.join(F, "manifest.json");
+      if (M.existsSync(p))
         try {
-          const c = ku(h);
+          const c = ku(p);
           c != null && c.UniqueID && (n[c.UniqueID] = {
             name: a,
             enabled: i[a].enabled
             // 트리 안에 값이 있으면 반영
           });
         } catch (c) {
-          console.error("manifest.json parse error:", h, c);
+          console.error("manifest.json parse error:", p, c);
         }
       typeof i[a] == "object" && Object.keys(i[a]).length > 0 && r(i[a], F);
     }
@@ -2295,33 +2295,33 @@ function mi(u, e, t) {
 function ku(u) {
   if (!M.existsSync(u)) return null;
   try {
-    const e = M.readFileSync(u, "utf-8"), t = Ei.parse(e);
+    const e = M.readFileSync(u, "utf-8"), t = Ai.parse(e);
     return t && t.UniqueID ? t : null;
   } catch (e) {
     return console.warn(`⚠️ manifest.json parse failed: ${u}`, e), null;
   }
 }
-function di(u) {
+function hi(u) {
   const e = {};
   for (const [t, { enabled: n }] of Object.entries(u)) {
-    const r = hi(x.MODS_DIR, t);
+    const r = pi(_.MODS_DIR, t);
     if (!r) continue;
-    const o = p.relative(x.MODS_DIR, r).split(p.sep);
+    const o = h.relative(_.MODS_DIR, r).split(h.sep);
     let a = e;
-    o.forEach((F, h) => {
-      a[F] || (a[F] = {}), h === o.length - 1 && (a[F].uniqueId = t, a[F].enabled = n), a = a[F];
+    o.forEach((F, p) => {
+      a[F] || (a[F] = {}), p === o.length - 1 && (a[F].uniqueId = t, a[F].enabled = n), a = a[F];
     });
   }
   return e;
 }
-function hi(u, e) {
+function pi(u, e) {
   function t(n) {
     if (!M.existsSync(n)) return null;
     const r = M.readdirSync(n, { withFileTypes: !0 });
     for (const i of r) {
-      const o = p.join(n, i.name);
+      const o = h.join(n, i.name);
       if (i.isDirectory()) {
-        const a = p.join(o, "manifest.json");
+        const a = h.join(o, "manifest.json");
         if (M.existsSync(a))
           try {
             if (ku(a).UniqueID === e)
@@ -2337,61 +2337,61 @@ function hi(u, e) {
   return t(u);
 }
 function Uu() {
-  return M.existsSync(x.CONFIG_PATH) ? JSON.parse(M.readFileSync(x.CONFIG_PATH, "utf-8")) : {};
+  return M.existsSync(_.CONFIG_PATH) ? JSON.parse(M.readFileSync(_.CONFIG_PATH, "utf-8")) : {};
 }
-function pi() {
+function At() {
   const u = Uu();
   return Object.keys(u);
 }
 function Bi(u, e) {
-  const t = Ee(u);
-  if (t[u])
+  if (At().includes(u))
     throw new Error(`Preset "${u}" already exists.`);
-  t[u] = e, yt(u, t);
+  const n = Ee(u);
+  n[u] = e, mt(u, n);
 }
-function At(u) {
+function yt(u) {
   return Ee(u);
 }
 function Si(u, e, t) {
   const r = {
-    ...At(u),
+    ...yt(u),
     ...t
   };
-  yt(e, r), u !== e && mt(u);
+  mt(e, r), u !== e && dt(u);
 }
-function yt(u, e) {
-  yi(e, u);
+function mt(u, e) {
+  mi(e, u);
 }
-function mt(u) {
+function dt(u) {
   let e = Uu();
   delete e[u], M.writeFileSync(
-    x.CONFIG_PATH,
+    _.CONFIG_PATH,
     JSON.stringify(e, null, 2),
     "utf-8"
   );
 }
 function wi() {
-  const u = x.MODS_DIR;
+  const u = _.MODS_DIR;
   return M.existsSync(u) ? M.readdirSync(u).filter((e) => {
-    const t = p.join(u, e);
+    const t = h.join(u, e);
     return M.statSync(t).isDirectory();
   }) : [];
 }
-function dt() {
-  if (!T.existsSync(x.INFO_PATH))
+function ht() {
+  if (!T.existsSync(_.INFO_PATH))
     return {};
   try {
-    const u = T.readFileSync(x.INFO_PATH, "utf-8");
+    const u = T.readFileSync(_.INFO_PATH, "utf-8");
     return JSON.parse(u);
   } catch (u) {
     return console.error("⚠️ Failed to read Info.json:", u), {};
   }
 }
 function vi(u) {
-  const t = { ...dt(), ...u };
+  const t = { ...ht(), ...u };
   try {
     T.writeFileSync(
-      x.INFO_PATH,
+      _.INFO_PATH,
       JSON.stringify(t, null, 2),
       "utf-8"
     );
@@ -2401,57 +2401,57 @@ function vi(u) {
 }
 let Qu;
 function gi() {
-  Qu = new $t({
+  Qu = new kt({
     minWidth: 560,
     minHeight: 700,
     width: 560,
     height: 800,
-    icon: p.join(
-      Ru.isPackaged ? process.resourcesPath : p.join(x.__dirname, "public"),
+    icon: h.join(
+      Ru.isPackaged ? process.resourcesPath : h.join(_.__dirname, "public"),
       "Stardrop.png"
     ),
     // 아이콘 경로
     webPreferences: {
-      preload: p.join(x.__dirname, "preload.mjs"),
+      preload: h.join(_.__dirname, "preload.mjs"),
       contextIsolation: !0,
       nodeIntegration: !1
     }
-  }), process.env.VITE_DEV_SERVER_URL ? Qu.loadURL(process.env.VITE_DEV_SERVER_URL) : Qu.loadFile(p.join(x.__dirname, "../dist/index.html"));
+  }), process.env.VITE_DEV_SERVER_URL ? Qu.loadURL(process.env.VITE_DEV_SERVER_URL) : Qu.loadFile(h.join(_.__dirname, "../dist/index.html"));
 }
 Ru.whenReady().then(gi);
-function ht(u) {
-  return p.join(u, "../", "Mods");
-}
 function pt(u) {
+  return h.join(u, "../", "Mods");
+}
+function Bt(u) {
   if (!T.existsSync(u)) return {};
   const e = {}, t = T.readdirSync(u);
   for (const n of t) {
-    const r = p.join(u, n);
+    const r = h.join(u, n);
     if (!T.statSync(r).isDirectory()) continue;
-    const i = p.join(r, "manifest.json");
+    const i = h.join(r, "manifest.json");
     if (T.existsSync(i))
       e[n] = [];
     else {
-      const o = pt(r);
+      const o = Bt(r);
       Object.keys(o).length > 0 && (e[n] = o);
     }
   }
   return e;
 }
-Y.handle("get-mod-list-tree", () => pt(x.MODS_DIR));
+Y.handle("get-mod-list-tree", () => Bt(_.MODS_DIR));
 Y.handle(
   "apply-mods",
   async (u, e, t) => {
     if (!e) throw new Error("smapiPath is not provided");
-    const n = ht(e), r = Ce(x.MODS_DIR);
+    const n = pt(e), r = Ce(_.MODS_DIR);
     for (const [i, o] of Object.entries(t)) {
       const a = o.uniqueId ?? i, F = r[a];
       if (!F || !o.enabled)
         continue;
-      const h = F.path, c = p.join(n, p.basename(h));
+      const p = F.path, c = h.join(n, h.basename(p));
       if (o.enabled)
         try {
-          await T.copy(h, c, { overwrite: !0 });
+          await T.copy(p, c, { overwrite: !0 });
         } catch (l) {
           console.error(`❌ Failed to copy ${a}:`, l);
         }
@@ -2466,19 +2466,20 @@ Y.handle(
 );
 Y.handle("read-config", async () => Ee());
 Y.handle("open-mods-folder", async () => {
-  T.existsSync(x.MODS_DIR) || T.mkdirSync(x.MODS_DIR), Pt.openPath(x.MODS_DIR);
+  T.existsSync(_.MODS_DIR) || T.mkdirSync(_.MODS_DIR), Pt.openPath(_.MODS_DIR);
 });
 Y.handle("get-presets", () => Uu() || {});
-Y.handle("get-preset-list", () => pi());
+Y.handle("get-preset-list", () => At());
 Y.handle("get-mods", () => wi());
-Y.handle("read-info", () => dt());
+Y.handle("read-info", () => ht());
 Y.handle("write-info", (u, e) => vi(e));
-async function Bt(u, e) {
+const bi = ["ConsoleCommands", "SaveBackup"];
+async function St(u, e) {
   const t = T.readdirSync(u, { withFileTypes: !0 });
   for (const n of t) {
-    const r = p.join(u, n.name), i = p.join(e, n.name);
+    const r = h.join(u, n.name), i = h.join(e, n.name);
     if (n.isDirectory()) {
-      const o = p.join(r, "manifest.json");
+      const o = h.join(r, "manifest.json");
       if (T.existsSync(o))
         try {
           const F = ku(o).UniqueID;
@@ -2486,31 +2487,37 @@ async function Bt(u, e) {
           if (!T.existsSync(i))
             await T.copy(r, i);
           else {
-            const h = p.join(
+            const p = h.join(
               i,
               "manifest.json"
-            ), c = p.join(
+            ), c = h.join(
               i,
               "config.json"
-            ), l = p.join(r, "config.json");
-            T.existsSync(h) && ku(h).UniqueID === F && T.existsSync(l) && await T.copyFile(l, c);
+            ), l = h.join(r, "config.json");
+            T.existsSync(p) && ku(p).UniqueID === F && T.existsSync(l) && await T.copyFile(l, c);
           }
         } catch (a) {
           console.error(`Failed to sync mod at ${r}:`, a);
         }
-      else
-        await Bt(r, i);
+      else {
+        const a = h.basename(r);
+        if (!bi.includes(a)) {
+          console.warn(`Skipping mod at ${r} (invalid manifest)`);
+          return;
+        }
+        await St(r, i);
+      }
     }
   }
 }
 Y.handle("sync-config-ingame", async (u, e) => {
   if (!e) throw new Error("smapiPath is not provided");
-  const t = ht(e), n = x.MODS_DIR;
-  return await Bt(t, n), { success: !0 };
+  const t = pt(e), n = _.MODS_DIR;
+  return await St(t, n), { success: !0 };
 });
 Y.handle("reset-mods", async (u, e) => {
   try {
-    await T.emptyDir(p.join(e, "../", "Mods"));
+    await T.emptyDir(h.join(e, "../", "Mods"));
   } catch (t) {
     throw console.error("Error resetting mods:", t), t;
   }
@@ -2527,12 +2534,12 @@ Y.handle(
     Si(e, t, n);
   }
 );
-Y.handle("read-preset", (u, e) => At(e));
+Y.handle("read-preset", (u, e) => yt(e));
 Y.handle("delete-preset", (u, e) => {
-  mt(e);
+  dt(e);
 });
 Y.handle("get-locale", () => Ru.getLocale().startsWith("ko") ? "ko" : "en");
 Y.handle("get-translations", (u, e) => {
-  const t = p.join(x.__dirname, "locales", `${e}.json`);
+  const t = h.join(_.__dirname, "locales", `${e}.json`);
   return T.existsSync(t) ? JSON.parse(T.readFileSync(t, "utf-8")) : {};
 });

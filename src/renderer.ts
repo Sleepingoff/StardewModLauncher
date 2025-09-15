@@ -413,7 +413,7 @@ async function renderPresetList() {
       if (
         confirm(
           (
-            text.alerts?.duplicatePreset || "Preset already exists. Overwrite?"
+            text.alerts?.overwritePreset || "Preset already exists. Overwrite?"
           ).replace("{presetName}", name)
         )
       ) {
@@ -567,7 +567,7 @@ async function initUserInfo() {
 savePathBtn.addEventListener("click", async () => {
   const smapiPath = smapiPathInput.value.trim();
   await window.api.writeInfo({ smapiPath });
-  alert(text.alerts.savePath);
+  alert(text.alerts?.savePath ?? "saved smapi path");
 });
 // -------------------- Apply  --------------------
 applyBtn.addEventListener("click", async () => {
