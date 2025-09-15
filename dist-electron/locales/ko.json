@@ -1,5 +1,6 @@
 {
   "title": "Stardew Mod Launcher",
+  "presetTitle": "프리셋 목록",
   "labels": {
     "smapiPath": "SMAPI 경로:",
     "selectPreset": "프리셋 선택:"
@@ -9,22 +10,23 @@
     "smapiPath": "스마피 경로를 입력해주세요"
   },
   "buttons": {
-    "presetName": "프리셋 이름",
-    "updatePreset": "프리셋 수정",
-    "savePreset": "프리셋 저장",
-    "deletePreset": "프리셋 삭제",
-    "applyMods": "게임 폴더에 모드 넣기",
-    "resetMods": "게임 모드 폴더 비우기",
+    "savePath": "경로 저장하기",
     "openMods": "내 모드 폴더 열기",
-    "refresh": "새로고침"
+    "resetMods": "게임 모드 폴더 지우기",
+    "applyMods": "모드 적용하기",
+    "syncMods": "모드 옵션 동기화",
+    "createPreset": "프리셋 생성",
+    "updatePreset": "프리셋 수정",
+    "duplicatePreset": "다른 이름으로 생성",
+    "deletePreset": "프리셋 삭제"
   },
-
   "alerts": {
     "noSmapiPath": "SMAPI 경로를 입력하세요",
     "noPresetName": "프리셋 이름을 입력하세요",
     "noSelectedPreset": "프리셋을 선택하세요",
     "modsApplied": "모드가 적용되었습니다! 필요하면 SMAPI를 수동 실행하세요.",
     "modsReset": "모드 폴더가 초기화되었습니다!",
-    "deletePresetConfirm": "Preset \"{presetName}\"를 삭제하시겠습니까?"
+    "deletePresetConfirm": "Preset \"{presetName}\"를 삭제하시겠습니까?",
+    "syncConfigOption": "게임 폴더에서 설정 옵션을 가져왔습니다."
   }
 }

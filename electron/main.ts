@@ -262,7 +262,7 @@ ipcMain.handle("get-locale", () => {
 
 // 번역 리소스 불러오기
 ipcMain.handle("get-translations", (event, locale: string) => {
-  const filePath = path.join(directory.__dirname, `${locale}.json`);
+  const filePath = path.join(directory.__dirname, "locales", `${locale}.json`);
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 });

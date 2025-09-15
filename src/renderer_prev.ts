@@ -452,20 +452,4 @@ async function loadLanguage(lang: string) {
   i18nMessages = await window.i18n.getMessages();
 }
 
-function applyI18n() {
-  // 텍스트용
-  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((el) => {
-    const key = el.dataset.i18n!;
-    el.textContent = t(key);
-  });
-
-  // placeholder용
-  document
-    .querySelectorAll<HTMLInputElement>("[data-i18n-placeholder]")
-    .forEach((el) => {
-      const key = el.dataset.i18nPlaceholder!;
-      el.placeholder = t(key);
-    });
-}
-
 init();

@@ -3386,7 +3386,7 @@ ipcMain.handle("get-locale", () => {
   return app.getLocale().startsWith("ko") ? "ko" : "en";
 });
 ipcMain.handle("get-translations", (event, locale) => {
-  const filePath = path$c.join(dir.__dirname, `${locale}.json`);
+  const filePath = path$c.join(dir.__dirname, "locales", `${locale}.json`);
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 });

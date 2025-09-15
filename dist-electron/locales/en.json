@@ -1,5 +1,7 @@
 {
   "title": "Stardew Mod Launcher",
+  "presetTitle": "Preset List",
+
   "labels": {
     "smapiPath": "SMAPI Path:",
     "selectPreset": "Select Preset:"
@@ -9,22 +11,23 @@
     "smapiPath": "Input your smapi path"
   },
   "buttons": {
-    "presetName": "Preset Name",
-    "updatePreset": "Update Preset",
-    "savePreset": "Save Preset",
-    "deletePreset": "Delete Preset",
-    "applyMods": "Apply Mods In game folder",
-    "resetMods": "Erase All Mods In game folder",
+    "savePath": "Save Path",
     "openMods": "Open My Mods Folder",
-    "refresh": "Refresh"
+    "resetMods": "Erase All Mods In game folder",
+    "applyMods": "Apply Mods In game folder",
+    "syncMods": "Sync Mod Options",
+    "createPreset": "Create Preset",
+    "updatePreset": "Update Preset",
+    "duplicatePreset": "Duplicate Preset",
+    "deletePreset": "Delete Preset"
   },
-
   "alerts": {
     "noSmapiPath": "Please enter the SMAPI path",
     "noPresetName": "Please enter a preset name",
     "noSelectedPreset": "Please select a preset",
     "modsApplied": "Mods have been applied! Launch SMAPI manually if needed.",
     "modsReset": "Mods folder has been reset!",
-    "deletePresetConfirm": "Do you really want to delete the preset \"{presetName}\"?"
+    "deletePresetConfirm": "Do you really want to delete the preset \"{presetName}\"?",
+    "syncConfigOption": "You got the settings options from the game folder."
   }
 }

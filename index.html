@@ -118,7 +118,9 @@
             Support/Steam/steamapps/common/Stardew
             Valley/Contents/MacOS/StardewModdingAPI
           </p>
-          <button id="savePathBtn">경로 저장하기</button>
+          <button id="savePathBtn" data-i18n="buttons.savePath">
+            경로 저장하기
+          </button>
         </div>
 
         <span class="border-x">
@@ -139,39 +141,54 @@
     </div>
 
     <div id="buttonContainer">
-      <button id="openFolderBtn">내 모드 폴더 열기</button>
-      <button id="resetBtn">게임 모드 폴더 지우기</button>
-      <button id="applyBtn">모드 적용하기</button>
-      <button id="syncBtn">모드 옵션 동기화</button>
+      <button id="openFolderBtn" data-i18n="buttons.openMods">
+        내 모드 폴더 열기
+      </button>
+      <button id="resetBtn" data-i18n="buttons.resetMods">
+        게임 모드 폴더 지우기
+      </button>
+      <button id="applyBtn" data-i18n="buttons.applyMods">모드 적용하기</button>
+      <button id="syncBtn" data-i18n="buttons.syncMods">
+        모드 옵션 동기화
+      </button>
     </div>
     <!-- 메인 컨테이너 -->
     <section id="mainSection" class="box">
-      <h2 id="sectionTitle">프리셋 관리</h2>
-
-      <!-- 콘텐츠 영역: 상황에 따라 교체 -->
+      <h2 id="sectionTitle" data-i18n="labels.selectPreset">프리셋 관리</h2>
       <div id="contentArea">
-        <!-- 처음에는 프리셋 리스트가 여기 표시됨 -->
         <ul id="presetList"></ul>
-
-        <!-- 프리셋 이름 입력 -->
         <div id="presetContainer">
           <input
             id="presetName"
             type="text"
             placeholder="새 프리셋 이름 입력"
+            data-i18n-placeholder="placeholders.newPreset"
           />
         </div>
 
-        <!-- 버튼들 -->
         <div id="buttonContainer">
-          <button id="createPresetBtn">프리셋 생성</button>
-          <button id="updatePresetBtn" style="display: none">
+          <button id="createPresetBtn" data-i18n="buttons.createPreset">
+            프리셋 생성
+          </button>
+          <button
+            id="updatePresetBtn"
+            data-i18n="buttons.updatePreset"
+            style="display: none"
+          >
             프리셋 수정
           </button>
-          <button id="duplicatePresetBtn" style="display: none">
+          <button
+            id="duplicatePresetBtn"
+            data-i18n="buttons.duplicatePreset"
+            style="display: none"
+          >
             다른 이름으로 생성
           </button>
-          <button id="deletePresetBtn" style="display: none">
+          <button
+            id="deletePresetBtn"
+            data-i18n="buttons.deletePreset"
+            style="display: none"
+          >
             프리셋 삭제
           </button>
         </div>

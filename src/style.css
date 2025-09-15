@@ -302,5 +302,9 @@ input[type="checkbox"] {
 }
 
 #buttonContainer {
-  margin: 8px 0;
+  margin: 8px;
+}
+
+#createPresetBtn {
+  margin: 8px;
 }

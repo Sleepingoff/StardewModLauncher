@@ -83,6 +83,28 @@ function setBranchChecked(rootPath: string, checked: boolean) {
   }
 }
 
+function getNestedValue(obj: any, path: string) {
+  return path.split(".").reduce((acc, part) => acc?.[part], obj);
+}
+
+function applyI18n() {
+  // 텍스트용
+  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((el) => {
+    const key = el.dataset.i18n!;
+    const value = getNestedValue(text, key);
+    if (value) el.textContent = value;
+  });
+
+  // placeholder용
+  document
+    .querySelectorAll<HTMLInputElement>("[data-i18n-placeholder]")
+    .forEach((el) => {
+      const key = el.dataset.i18nPlaceholder!;
+      const value = getNestedValue(text, key);
+      if (value) el.placeholder = value;
+    });
+}
+
 // =========================================================
 // === ModTree renderer (ADD) ==============================
 function renderModTree(
@@ -261,7 +283,7 @@ function bindRefreshButton() {
 // 프리셋 리스트 화면
 // -----------------------------
 async function renderPresetList() {
-  sectionTitle.textContent = text.title || "Preset Manager";
+  sectionTitle.textContent = text.presetTitle || "Preset Manager";
   contentArea.innerHTML = "";
 
   // 새 프리셋 입력창
@@ -300,9 +322,9 @@ async function renderPresetList() {
       }
     }
   });
-
+  presetContainer.appendChild(createBtn);
   contentArea.appendChild(presetContainer);
-  contentArea.appendChild(createBtn);
+  //   contentArea.appendChild(createBtn);
 
   const presets = await window.api.getPresetLists();
 
@@ -461,4 +483,5 @@ openFolderBtn.addEventListener("click", async () => {
   renderPresetList();
   initModTreeIfNeeded();
   initUserInfo();
+  applyI18n();
 })();
