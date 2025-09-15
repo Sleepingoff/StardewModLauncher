@@ -17,9 +17,9 @@
     "applyMods": "Apply Mods In game folder",
     "syncMods": "Sync Mod Options",
     "createPreset": "Create Preset",
-    "updatePreset": "Update Preset",
-    "duplicatePreset": "Duplicate Preset",
-    "deletePreset": "Delete Preset"
+    "updatePreset": "Update",
+    "duplicatePreset": "Duplicate",
+    "deletePreset": "Delete"
   },
   "alerts": {
     "noSmapiPath": "Please enter the SMAPI path",

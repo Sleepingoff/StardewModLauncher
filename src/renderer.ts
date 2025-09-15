@@ -357,7 +357,11 @@ async function renderPresetList() {
 // -----------------------------
 async function renderBtnInModTrees() {
   sectionTitle.innerHTML = "";
+  const presetNameInfo = document.createElement("p");
+  presetNameInfo.textContent = text.info?.presetName || "Input Preset Name";
+  sectionTitle.prepend(presetNameInfo);
   const titleInput = document.createElement("input");
+  titleInput.id = "presetName";
   titleInput.value = selectedPreset!;
   let newName = titleInput.value;
   titleInput.addEventListener("change", (e) => {
@@ -436,7 +440,9 @@ const openFolderBtn = document.getElementById(
 const savePathBtn = document.getElementById("savePathBtn") as HTMLButtonElement;
 const syncBtn = document.getElementById("syncBtn") as HTMLButtonElement;
 const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
-
+const presetContainer = document.getElementById(
+  "presetContainer"
+) as HTMLElement;
 async function initUserInfo() {
   const info = await window.api.readInfo();
   if (info?.smapiPath) smapiPathInput.value = info.smapiPath;

@@ -5,6 +5,15 @@ body {
   box-sizing: border-box;
 }
 
+h1 {
+  margin: 8px;
+  font-size: 24px;
+}
+
+h2 {
+  margin: 8px;
+}
+
 p {
   font-size: small;
 }
@@ -12,6 +21,24 @@ p {
 hr {
   margin: 8px 0px;
   background-color: #357abd;
+}
+
+ul {
+  padding: 8px;
+}
+
+li {
+  width: calc(100% - 8px);
+  list-style: none;
+  border: 2px solid #fff;
+  margin-bottom: 8px;
+  padding: 2px 4px;
+}
+
+li:hover {
+  font-weight: bold;
+  border: 2px solid #3f0f08;
+  border-radius: 4px;
 }
 
 .a11y-hidden {
@@ -62,16 +89,6 @@ label:hover {
   font-weight: bold;
 }
 
-button {
-  border-radius: 9999px;
-  border: none;
-  padding: 4px 8px;
-  font-weight: inherit;
-}
-
-button:hover {
-  background-color: #ccc;
-}
 
 /* 전체 컨테이너 */
 #modCheckboxes {
@@ -150,6 +167,7 @@ input[type="checkbox"] {
 .box {
   display: flex;
   flex-direction: column;
+  width: 100%;
   min-width: 20px;
   min-height: 20px;
   align-items: flex-start;
@@ -164,7 +182,9 @@ input[type="checkbox"] {
 }
 
 .box-content {
-  margin: 16px;
+  width: 100%;
+  margin: auto;
+  padding: 16px;
 }
 
 /* Y축 border */
@@ -177,6 +197,7 @@ input[type="checkbox"] {
   border-radius: 2px;
   border: 2px solid #3f0f08;
   background: #e27a3e;
+  flex-shrink: 0;
 }
 
 .border-y-container {
@@ -240,59 +261,25 @@ input[type="checkbox"] {
   height: 24%;
 }
 
-.custom-select {
+button {
   display: inline-block;
-  position: relative;
-  width: 200px;
+  min-width: 160px;
   border-radius: 2px;
   border: 2px solid #853605;
-  background: linear-gradient(230deg, #fa9305 19.82%, #d97405 66.9%, #b14e05 80.18%);
+  background: linear-gradient(230deg, #f9b24f 19.82%, #df801b 66.9%, #df650e 80.18%);
   font-family: sans-serif;
   cursor: pointer;
-}
-
-.custom-select .selected {
-  padding: 4px 8px;
-  background: #ffd284;
-  border-radius: 1px;
-}
-
-.custom-select .options {
-  display: none;
-
-}
-
-.custom-select .options li {
-  padding: 4px 8px;
-  border-bottom: 2px solid #edbb64;
-}
-
-.custom-select.open .options {
-  display: block;
-  position: absolute;
-  top: 100%;
-  left: -2px;
-  width: 100%;
-  border-radius: 2px;
-  border: 2px solid #b14e05;
-  background: #ffd284;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 10;
-}
-
-.custom-select .options li:hover {
-  background-color: #fa9305;
-  color: #fff;
+  padding: 4px;
 }
 
 #presetContainer {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+}
+
+#presetContainer>input {
   width: 100%;
 }
 
@@ -303,8 +290,43 @@ input[type="checkbox"] {
 
 #buttonContainer {
   margin: 8px;
+  margin-right: auto;
+  margin-left: auto;
+  width: fit-content;
+}
+
+#buttonContainer button {
+  margin: 0 8px;
 }
 
 #createPresetBtn {
   margin: 8px;
+}
+
+#mainSection {
+  margin: 16px 0;
+  width: 100%;
+
+}
+
+#mainSection .box-content {
+  background-color: #fff;
+  min-height: 40vh;
+}
+
+#mainSection #buttonContainer button {
+  min-width: 80px;
+}
+
+#presetName {
+  display: block;
+  width: 80%;
+  margin: auto;
+  font-weight: bold;
+}
+
+#mainSection .box-content {
+  height: fit-content;
+  max-height: 40vh;
+  overflow-y: auto;
 }

@@ -16,9 +16,9 @@
     "applyMods": "모드 적용하기",
     "syncMods": "모드 옵션 동기화",
     "createPreset": "프리셋 생성",
-    "updatePreset": "프리셋 수정",
-    "duplicatePreset": "다른 이름으로 생성",
-    "deletePreset": "프리셋 삭제"
+    "updatePreset": "수정",
+    "duplicatePreset": "복제",
+    "deletePreset": "삭제"
   },
   "alerts": {
     "noSmapiPath": "SMAPI 경로를 입력하세요",
