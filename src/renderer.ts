@@ -26,8 +26,13 @@ interface Window {
 
     getMods: () => Promise<string[]>;
     getModListTree: () => Promise<Record<string, string[]>>; // 상위 폴더 → 하위 모드
+    applyMods: (smapiPath: string, modStates: ModStates) => Promise<void>;
+    resetMods: (modStates: ModStates) => Promise<void>;
 
+    openMyModsFolder: () => Promise<void>;
     readConfig: () => Promise<Presets>;
+    writeInfo: (data: Record<string, string>) => Promise<void>;
+    readInfo: () => Promise<Record<string, string>>;
 
     // 다국어 지원
     getLocale: () => Promise<string>; // ex) "en", "ko"
@@ -396,6 +401,48 @@ async function renderBtnInModTrees() {
 
   contentArea.appendChild(buttonContainer);
 }
+// -----------------------------
+// util buttons
+// -----------------------------
+const applyBtn = document.getElementById("applyBtn") as HTMLButtonElement;
+const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
+const openFolderBtn = document.getElementById(
+  "openFolderBtn"
+) as HTMLButtonElement;
+const savePathBtn = document.getElementById("savePathBtn") as HTMLButtonElement;
+const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
+
+async function initUserInfo() {
+  const info = await window.api.readInfo();
+  if (info?.smapiPath) smapiPathInput.value = info.smapiPath;
+}
+
+savePathBtn.addEventListener("click", async () => {
+  const smapiPath = smapiPathInput.value.trim();
+  await window.api.writeInfo({ smapiPath });
+});
+// -------------------- Apply  --------------------
+applyBtn.addEventListener("click", async () => {
+  const smapiPath = smapiPathInput.value.trim();
+  if (!smapiPath) return alert(t("alerts.noSmapiPath"));
+
+  const selectedPreset = presetContainer.textContent;
+  if (!selectedPreset) return alert(t("alerts.noSelectedPreset"));
+
+  await window.api.applyMods(smapiPath, modStates);
+  alert(t("alerts.modsApplied"));
+});
+
+// -------------------- Reset Mods --------------------
+resetBtn.addEventListener("click", async () => {
+  await window.api.resetMods(modStates);
+  alert(t("alerts.modsReset"));
+});
+
+openFolderBtn.addEventListener("click", async () => {
+  await window.api.openMyModsFolder();
+  await refreshModTree();
+});
 
 // -----------------------------
 // 초기 실행
@@ -404,4 +451,5 @@ async function renderBtnInModTrees() {
   await initTranslations();
   renderPresetList();
   initModTreeIfNeeded();
+  initUserInfo();
 })();

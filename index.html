@@ -7,62 +7,7 @@
   </head>
   <body>
     <h2>Stardew Mod Launcher</h2>
-    <div class="box">
-      <div class="border-y">
-        <div class="border-y-container">
-          <div class="dashed" style="--color: #96473a"></div>
-          <div class="dashed" style="--color: #96473a"></div>
-        </div>
-      </div>
-
-      <div class="box-inner">
-        <span class="border-x">
-          <div class="shadow"></div>
-          <div class="border-x-container">
-            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
-            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
-          </div>
-        </span>
-
-        <div class="box-content">
-          <label data-i18n="labels.smapiPath">SMAPI 경로:</label>
-          <input
-            type="text"
-            id="smapiPath"
-            size="50"
-            placeholder="스마피 경로를 입력해주세요"
-            data-i18n-placeholder="placeholders.smapiPath"
-          />
-          <p>
-            MacOS: /Users/mac/Library/Application
-            Support/Steam/steamapps/common/Stardew
-            Valley/Contents/MacOS/StardewModdingAPI
-          </p>
-        </div>
-
-        <span class="border-x">
-          <div class="shadow"></div>
-          <div class="border-x-container">
-            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
-            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
-          </div>
-        </span>
-      </div>
-
-      <div class="border-y">
-        <div class="border-y-container">
-          <div class="dashed" style="--color: #96473a"></div>
-          <div class="dashed" style="--color: #96473a"></div>
-        </div>
-      </div>
-    </div>
-
-    <hr />
-    <div id="buttonContainer">
-      <button id="openFolderBtn">내 모드 폴더 열기</button>
-      <button id="resetBtn">게임 모드 폴더 지우기</button>
-      <button id="applyBtn">모드 적용하기</button>
-    </div>
+   
     <div id="presetContainer">
       <label data-i18n="labels.selectPreset">프리셋 선택: </label>
       <div class="custom-select" id="presetDropdownContainer">
@@ -142,7 +87,62 @@
   </head>
   <body>
     <h1>Stardew Mod Launcher</h1>
+    <div class="box">
+      <div class="border-y">
+        <div class="border-y-container">
+          <div class="dashed" style="--color: #96473a"></div>
+          <div class="dashed" style="--color: #96473a"></div>
+        </div>
+      </div>
 
+      <div class="box-inner">
+        <span class="border-x">
+          <div class="shadow"></div>
+          <div class="border-x-container">
+            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
+            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
+          </div>
+        </span>
+
+        <div class="box-content">
+          <label data-i18n="labels.smapiPath">SMAPI 경로:</label>
+          <input
+            type="text"
+            id="smapiPath"
+            size="50"
+            placeholder="스마피 경로를 입력해주세요"
+            data-i18n-placeholder="placeholders.smapiPath"
+          />
+          <p>
+            MacOS: /Users/mac/Library/Application
+            Support/Steam/steamapps/common/Stardew
+            Valley/Contents/MacOS/StardewModdingAPI
+          </p>
+          <button id="savePathBtn">경로 저장하기</button>
+        </div>
+
+        <span class="border-x">
+          <div class="shadow"></div>
+          <div class="border-x-container">
+            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
+            <div class="dashed dashed-x" style="--color: #ffbe65"></div>
+          </div>
+        </span>
+      </div>
+
+      <div class="border-y">
+        <div class="border-y-container">
+          <div class="dashed" style="--color: #96473a"></div>
+          <div class="dashed" style="--color: #96473a"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="buttonContainer">
+      <button id="openFolderBtn">내 모드 폴더 열기</button>
+      <button id="resetBtn">게임 모드 폴더 지우기</button>
+      <button id="applyBtn">모드 적용하기</button>
+    </div>
     <!-- 메인 컨테이너 -->
     <section id="mainSection" class="box">
       <h2 id="sectionTitle">프리셋 관리</h2>

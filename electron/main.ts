@@ -1,9 +1,8 @@
+import fs from "fs-extra";
 import { dir as directory } from "./const";
-import fs from "fs";
 
-// import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { shell } from "electron";
 // import path from "path";
-// import fs from "fs-extra";
 // import { fileURLToPath } from "url";
 // import {
 //   loadConfig,
@@ -37,10 +36,10 @@ app.whenReady().then(createWindow);
 
 // // -------- 유틸 함수 --------
 
-// function getModsPath(smapiPath: string) {
-//   const smapiDir = path.dirname(smapiPath);
-//   return path.join(smapiDir, "Mods");
-// }
+function getModsPath(smapiPath: string) {
+  const smapiDir = path.dirname(smapiPath);
+  return path.join(smapiDir, "Mods");
+}
 
 // // -------------------- 모드 트리 --------------------
 function scanModsTreeByManifest(dir: string): Record<string, any> {
@@ -74,35 +73,39 @@ ipcMain.handle("get-mod-list-tree", () => {
 //   return { modsOriginalPath: MODS_DIR, configPath: CONFIG_PATH };
 // });
 
-// ipcMain.handle("apply-mods", async (_event, { smapiPath, modStates }) => {
-//   if (!smapiPath) throw new Error("smapiPath is not provided");
+ipcMain.handle("apply-mods", async (_event, { smapiPath, modStates }) => {
+  if (!smapiPath) throw new Error("smapiPath is not provided");
 
-//   const modsUserPath = getModsPath(smapiPath);
-//   const modMap = buildModMapRecursive(MODS_DIR);
+  const modsUserPath = getModsPath(smapiPath);
+  const modMap = buildModMapRecursive(directory.MODS_DIR);
 
-//   for (const [uniqueId, enabled] of Object.entries(modStates)) {
-//     const src = modMap[uniqueId];
-//     if (!src) {
-//       console.warn(`Mod not found for UniqueID: ${uniqueId}`);
-//       continue;
-//     }
+  for (const [uniqueId, enabled] of Object.entries(modStates)) {
+    const modInfo = modMap[uniqueId];
+    if (!modInfo) {
+      console.warn(`⚠️ Mod not found for UniqueID: ${uniqueId}`);
+      continue;
+    }
 
-//     const dest = path.join(modsUserPath, path.basename(src));
-//     if (enabled) {
-//       fs.copySync(src, dest);
-//     } else {
-//       fs.removeSync(dest);
-//     }
-//   }
-// });
+    const src = modInfo.path;
+    const dest = path.join(modsUserPath, path.basename(src));
 
-// ipcMain.handle("reset-mods", async (_event, { smapiPath, modStates }) => {
-//   const modsUserPath = getModsPath(smapiPath);
-//   for (const uniqueId of Object.keys(modStates)) {
-//     const modPath = path.join(modsUserPath, uniqueId);
-//     fs.removeSync(modPath);
-//   }
-// });
+    if (enabled) {
+      try {
+        fs.copyFileSync(src, dest);
+      } catch (err) {
+        console.error(`❌ Failed to copy ${uniqueId}:`, err);
+      }
+    } else {
+      try {
+        if (fs.existsSync(dest)) {
+          fs.removeSync(dest);
+        }
+      } catch (err) {
+        console.error(`❌ Failed to remove ${uniqueId}:`, err);
+      }
+    }
+  }
+});
 
 ipcMain.handle("read-config", async () => {
   return loadConfig();
@@ -133,9 +136,9 @@ ipcMain.handle("read-config", async () => {
 // });
 
 // // -------- Mods 폴더 열기 --------
-// ipcMain.handle("open-mods-folder", async () => {
-//   shell.openPath(MODS_DIR);
-// });
+ipcMain.handle("open-mods-folder", async () => {
+  shell.openPath(directory.MODS_DIR);
+});
 
 // main.ts
 import { app, BrowserWindow, ipcMain } from "electron";
@@ -148,8 +151,9 @@ import {
   readPreset,
   updatePreset,
 } from "./presetManager";
-import { folderTreeToConfig, loadConfig, saveConfig } from "./configManager";
+import { buildModMapRecursive, loadConfig } from "./configManager";
 import { getModsFromDisk } from "./modManager"; // Mods 폴더 스캔 유틸 (필요 시 구현)
+import { readInfo, writeInfo } from "./infoManager";
 
 // Preset 가져오기
 ipcMain.handle("get-presets", () => {
@@ -165,6 +169,15 @@ ipcMain.handle("get-preset-list", () => {
 // Mods 폴더 목록 가져오기
 ipcMain.handle("get-mods", () => {
   return getModsFromDisk();
+});
+// 사용자 설정 읽기
+ipcMain.handle("read-info", () => {
+  return readInfo();
+});
+
+// 사용자 설정 쓰기
+ipcMain.handle("write-info", (event, data) => {
+  return writeInfo(data);
 });
 
 // 프리셋 생성

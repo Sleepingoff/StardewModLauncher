@@ -18,24 +18,26 @@ contextBridge.exposeInMainWorld("api", {
   // getModListTree: () => ipcRenderer.invoke("get-mod-list-tree"),
   // setModList: (filePaths: string[], containerPath: string) =>
   //   ipcRenderer.invoke("mod-drop", { filePaths, containerPath }),
-  // // 모드 적용
-  // applyMods: (smapiPath: string, modStates: Record<string, boolean>) =>
-  //   ipcRenderer.invoke("apply-mods", { smapiPath, modStates }),
+  // 모드 적용
+  applyMods: (smapiPath: string, modStates: Record<string, boolean>) =>
+    ipcRenderer.invoke("apply-mods", { smapiPath, modStates }),
 
-  // // 모드 초기화
-  // resetMods: (smapiPath: string, modStates: Record<string, boolean>) =>
-  //   ipcRenderer.invoke("reset-mods", { smapiPath, modStates }),
+  // 모드 초기화
+  resetMods: (smapiPath: string, modStates: Record<string, boolean>) =>
+    ipcRenderer.invoke("reset-mods", { smapiPath, modStates }),
 
   // // 설정 읽기
   readConfig: (): Promise<Record<string, any>> =>
     ipcRenderer.invoke("read-config"),
+  // 설정 쓰기
+  readInfo: () => ipcRenderer.invoke("read-info"),
 
-  // // 설정 쓰기
-  // writeConfig: (data: Record<string, any>) =>
-  //   ipcRenderer.invoke("write-config", data),
+  // 설정 쓰기
+  writeInfo: (data: Record<string, string>) =>
+    ipcRenderer.invoke("write-info", data),
 
-  // //내 MODS 폴더 열기
-  // openMyModsFolder: () => ipcRenderer.invoke("open-mods-folder"),
+  //내 MODS 폴더 열기
+  openMyModsFolder: () => ipcRenderer.invoke("open-mods-folder"),
 
   getPresets: () => ipcRenderer.invoke("get-presets"),
   getPresetLists: () => ipcRenderer.invoke("get-preset-list"),

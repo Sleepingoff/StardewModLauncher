@@ -37,13 +37,13 @@ const savePresetBtn = document.getElementById(
 const deletePresetBtn = document.getElementById(
   "deletePresetBtn"
 ) as HTMLButtonElement;
-const applyBtn = document.getElementById("applyBtn") as HTMLButtonElement;
-const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
-const refreshBtn = document.getElementById("refreshBtn") as HTMLButtonElement;
-const openFolderBtn = document.getElementById(
-  "openFolderBtn"
-) as HTMLButtonElement;
-const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
+// const applyBtn = document.getElementById("applyBtn") as HTMLButtonElement;
+// const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
+// const refreshBtn = document.getElementById("refreshBtn") as HTMLButtonElement;
+// const openFolderBtn = document.getElementById(
+//   "openFolderBtn"
+// ) as HTMLButtonElement;
+// const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
 
 // let modStates: ModStates = {};
 let modsConfig: Presets = {};
