@@ -10,6 +10,7 @@
   },
   "buttons": {
     "presetName": "프리셋 이름",
+    "updatePreset": "프리셋 수정",
     "savePreset": "프리셋 저장",
     "deletePreset": "프리셋 삭제",
     "applyMods": "게임 폴더에 모드 넣기",

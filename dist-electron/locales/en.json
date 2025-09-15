@@ -10,6 +10,7 @@
   },
   "buttons": {
     "presetName": "Preset Name",
+    "updatePreset": "Update Preset",
     "savePreset": "Save Preset",
     "deletePreset": "Delete Preset",
     "applyMods": "Apply Mods In game folder",

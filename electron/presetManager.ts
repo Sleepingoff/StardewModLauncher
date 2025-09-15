@@ -1,21 +1,22 @@
 import fs from "fs";
-import path from "path";
-
+import { configToFolderTree, loadConfig, saveConfig } from "./configManager";
+import { dir as directory } from "./const";
 /**
  * config.json 전체 로드
  */
-export function loadAllPresets(
-  configPath: string
-): Record<string, Record<string, { name: string; enabled: boolean }>> {
-  if (!fs.existsSync(configPath)) return {};
-  return JSON.parse(fs.readFileSync(configPath, "utf-8"));
+export function loadAllPresets(): Record<
+  string,
+  Record<string, { name: string; enabled: boolean }>
+> {
+  if (!fs.existsSync(directory.CONFIG_PATH)) return {};
+  return JSON.parse(fs.readFileSync(directory.CONFIG_PATH, "utf-8"));
 }
 
 /**
  * 프리셋 목록만 가져오기
  */
-export function listPresets(configPath: string): string[] {
-  const all = loadAllPresets(configPath);
+export function listPresets(): string[] {
+  const all = loadAllPresets();
   return Object.keys(all);
 }
 
@@ -23,31 +24,63 @@ export function listPresets(configPath: string): string[] {
  * 특정 프리셋 로드
  */
 export function loadPreset(
-  configPath: string,
   presetName: string
 ): Record<string, { name: string; enabled: boolean }> {
-  const all = loadAllPresets(configPath);
+  const all = loadAllPresets();
   return all[presetName] ?? {};
 }
+// 프리셋 생성 (이미 존재하면 에러 처리)
+export function createPreset(
+  presetName: string,
+  mods: Record<string, boolean>
+) {
+  const config = loadConfig(presetName);
 
+  if (config[presetName]) {
+    throw new Error(`Preset "${presetName}" already exists.`);
+  }
+  config[presetName] = mods;
+  saveConfig(config, presetName);
+}
+
+export function readPreset(presetName: string) {
+  const config = loadConfig(presetName);
+  return config;
+}
+// 프리셋 수정 (기존 이름을 새 이름으로 변경 가능)
+export function updatePreset(
+  oldName: string,
+  newName: string,
+  mods: Record<string, { name: string; enabled: boolean }>
+) {
+  if (oldName != newName) deletePreset(oldName);
+  savePreset(newName, mods);
+}
 /**
  * 특정 프리셋 저장 (기존 파일에 merge)
  */
 export function savePreset(
-  configPath: string,
   presetName: string,
   presetData: Record<string, { name: string; enabled: boolean }>
 ) {
-  let all = loadAllPresets(configPath);
+  let all = loadAllPresets();
   all[presetName] = presetData;
-  fs.writeFileSync(configPath, JSON.stringify(all, null, 2), "utf-8");
+  fs.writeFileSync(
+    directory.CONFIG_PATH,
+    JSON.stringify(all, null, 2),
+    "utf-8"
+  );
 }
 
 /**
  * 특정 프리셋 삭제
  */
-export function deletePreset(configPath: string, presetName: string) {
-  let all = loadAllPresets(configPath);
+export function deletePreset(presetName: string) {
+  let all = loadAllPresets();
   delete all[presetName];
-  fs.writeFileSync(configPath, JSON.stringify(all, null, 2), "utf-8");
+  fs.writeFileSync(
+    directory.CONFIG_PATH,
+    JSON.stringify(all, null, 2),
+    "utf-8"
+  );
 }

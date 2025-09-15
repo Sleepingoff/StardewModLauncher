@@ -1,192 +1,97 @@
-interface ModStates {
-  [modName: string]: boolean;
-}
+// renderer.ts
 interface Presets {
-  [presetName: string]: ModStates;
+  [presetName: string]: Record<string, boolean>;
+}
+
+interface ModStates {
+  [modName: string]: {
+    name: string;
+    enabled: boolean;
+  };
 }
 
 interface Window {
   api: {
-    getPaths: () => Promise<{
-      modsOriginalPath: string;
-      configPath: string;
-    }>;
-    readConfig: () => Promise<Presets>;
-    writeConfig: (config: Presets) => Promise<void>;
+    // 프리셋 관련
+    getPresets: () => Promise<Presets>;
+    getPresetLists: () => Promise<string[]>;
+    readPreset: (presetName: string) => Promise<ModStates>;
+    createPreset: (name: string, mods: ModStates) => Promise<void>;
+    updatePreset: (
+      oldName: string,
+      newName: string,
+      mods: ModStates
+    ) => Promise<void>;
+    deletePreset: (name: string) => Promise<void>;
+
+    getMods: () => Promise<string[]>;
     getModListTree: () => Promise<Record<string, string[]>>; // 상위 폴더 → 하위 모드
-    applyMods: (smapiPath: string, modStates: ModStates) => Promise<void>;
-    resetMods: (modStates: ModStates) => Promise<void>;
-    setModList: (filePaths: string[], containerPath: string) => Promise<void>;
-    openMyModsFolder: () => Promise<void>;
-  };
 
-  i18n: {
-    setLanguage: (lang: string) => Promise<Record<string, string>>;
-    getLanguage: () => Promise<string>;
-    getMessages: () => Promise<Record<string, string[]>>;
+    readConfig: () => Promise<Presets>;
+
+    // 다국어 지원
+    getLocale: () => Promise<string>; // ex) "en", "ko"
+    getTranslations: (locale: string) => Promise<Record<string, any>>;
   };
 }
 
-const modContainer = document.getElementById("modCheckboxes")!;
-const presetNameInput = document.getElementById(
-  "presetName"
-) as HTMLInputElement;
-const savePresetBtn = document.getElementById(
-  "savePresetBtn"
-) as HTMLButtonElement;
-const deletePresetBtn = document.getElementById(
-  "deletePresetBtn"
-) as HTMLButtonElement;
-const applyBtn = document.getElementById("applyBtn") as HTMLButtonElement;
-const resetBtn = document.getElementById("resetBtn") as HTMLButtonElement;
-const refreshBtn = document.getElementById("refreshBtn") as HTMLButtonElement;
-const openFolderBtn = document.getElementById(
-  "openFolderBtn"
-) as HTMLButtonElement;
-const smapiPathInput = document.getElementById("smapiPath") as HTMLInputElement;
+// DOM Elements
+const sectionTitle = document.getElementById("sectionTitle") as HTMLElement;
+const contentArea = document.getElementById("contentArea") as HTMLElement;
 
+// 상태
+let selectedPreset: string | null = null;
+let text: any = {}; // 번역 리소스 저장
+
+// -----------------------------
+// 번역 초기화
+// -----------------------------
+async function initTranslations() {
+  const locale = await window.api.getLocale();
+  text = await window.api.getTranslations(locale);
+}
+// === ModTree state & utils (ADD) =========================
+
+const parentChildrenMap = new Map<string, string[]>(); // parentPath -> childPaths
+const childParentMap = new Map<string, string>(); // childPath  -> parentPath
 let modStates: ModStates = {};
-let modsConfig: Presets = {};
-let modTree: Record<string, string[]> = {};
-let i18nMessages: Record<string, any> = {};
-let currentPresetName: string = "";
-// -------------------- 초기화 --------------------
-async function init() {
-  modsConfig = await window.api.readConfig();
-  modTree = await window.api.getModListTree();
-  i18nMessages = await window.i18n.setLanguage("ko"); // 초기 언어: 한국어
-  renderMods(modTree);
-  updateUITexts();
-  updatePresetDropdownUI(modsConfig);
+let modTreeInitialized = false;
+
+const byId = <T extends HTMLElement = HTMLElement>(id: string) =>
+  document.getElementById(id) as T | null;
+
+const joinPath = (...parts: string[]) => parts.filter(Boolean).join("/");
+
+// 부모 클릭 시 하위 전체 토글
+function setBranchChecked(rootPath: string, checked: boolean) {
+  modStates[rootPath].enabled = checked;
+  const children = parentChildrenMap.get(rootPath) || [];
+  for (const child of children) {
+    modStates[child].enabled = checked;
+    const cb = document.querySelector<HTMLInputElement>(
+      `input[type="checkbox"][data-path="${CSS.escape(child)}"]`
+    );
+    if (cb) cb.checked = checked;
+    setBranchChecked(child, checked);
+  }
 }
 
-// -------------------- 모드 트리 렌더 --------------------
-
-function loadModListUI(tree: Record<string, string[]>) {
-  const modTree = tree; // main에서 scanModsTreeByManifest로 가져오는 함수
-  modContainer.innerHTML = "";
-  modStates = {};
-
-  Object.entries(modTree).forEach(async ([parent, children]) => {
-    if (children.length === 0) {
-      // 하위 모드 없는 경우 → 그냥 체크박스
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.id = parent;
-      checkbox.checked = true;
-
-      const label = document.createElement("label");
-      const span = document.createElement("span");
-      label.appendChild(checkbox);
-      label.appendChild(span);
-      label.appendChild(document.createTextNode(parent));
-
-      label.dataset.path = parent;
-
-      modContainer.appendChild(label);
-      modContainer.appendChild(document.createElement("br"));
-      modContainer.dataset.path = `../`;
-      modContainer.dataset.subcontainerName = "../Mods";
-
-      modStates[parent] = true;
-
-      checkbox.addEventListener("change", () => {
-        modStates[parent] = checkbox.checked;
-      });
-    } else {
-      // 하위 모드 있는 경우 → 체크박스 + 토글 버튼
-      const wrapper = document.createElement("div");
-      wrapper.style.marginBottom = "4px";
-
-      const parentLabel = document.createElement("label");
-      const spanCheckbox = document.createElement("span");
-
-      const parentCheckbox = document.createElement("input");
-      parentCheckbox.type = "checkbox";
-      parentCheckbox.id = parent;
-      parentCheckbox.checked = true;
-
-      parentLabel.appendChild(parentCheckbox);
-      parentLabel.appendChild(spanCheckbox);
-
-      const toggleBtn = document.createElement("button");
-      toggleBtn.textContent = parent;
-
-      const subContainer = document.createElement("div");
-
-      subContainer.style.display = "none";
-      subContainer.style.paddingLeft = "20px";
-      wrapper.id = parent;
-
-      const childCheckboxes: HTMLInputElement[] = [];
-
-      children.forEach((child) => {
-        const label = document.createElement("label");
-        const span = document.createElement("span");
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = child;
-        checkbox.checked = true;
-        label.appendChild(checkbox);
-        label.appendChild(span);
-        label.appendChild(document.createTextNode(child));
-        label.dataset.path = `${parent}/${child}`;
-        subContainer.dataset.subcontainerName = parent;
-        subContainer.appendChild(label);
-        subContainer.appendChild(document.createElement("br"));
-
-        modStates[child] = true;
-        childCheckboxes.push(checkbox);
-
-        checkbox.addEventListener("change", () => {
-          modStates[child] = checkbox.checked;
-          // 상위 체크박스 상태 갱신
-          parentCheckbox.checked = childCheckboxes.every((c) => c.checked);
-        });
-      });
-
-      // 상위 체크박스로 하위 전체 선택/해제
-      parentCheckbox.addEventListener("change", () => {
-        childCheckboxes.forEach((cb) => {
-          cb.checked = parentCheckbox.checked;
-          modStates[cb.id] = cb.checked;
-        });
-      });
-
-      toggleBtn.addEventListener("click", () => {
-        subContainer.style.display =
-          subContainer.style.display === "none" ? "block" : "none";
-      });
-
-      wrapper.appendChild(parentLabel);
-      wrapper.appendChild(toggleBtn);
-      wrapper.appendChild(subContainer);
-      wrapper.dataset.path = `${parent}`;
-      modContainer.appendChild(wrapper);
-
-      // 초기 상태 저장
-      modStates[parent] = true;
-    }
-  });
-}
-
+// =========================================================
+// === ModTree renderer (ADD) ==============================
 function renderModTree(
   tree: Record<string, any>,
   container: HTMLElement,
   parentPath = ""
 ) {
-  Object.entries(tree).forEach(([name, children]) => {
+  Object.entries(tree).forEach(([name, value]) => {
     const fullPath = parentPath ? `${parentPath}/${name}` : name;
 
-    // children이 배열(파일 리스트)인지 객체(폴더)인지 구분
-    const isLeaf = Array.isArray(children) && children.length === 0;
-
-    if (isLeaf) {
-      // 하위 없음 → 체크박스
+    // 📌 leaf: 모드 노드 (__uniqueId, __enabled 보유)
+    if (typeof value === "object" && value.uniqueId) {
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.id = fullPath;
-      checkbox.checked = true;
+      checkbox.checked = !!value.enabled;
 
       const label = document.createElement("label");
       const span = document.createElement("span");
@@ -198,13 +103,20 @@ function renderModTree(
       container.appendChild(label);
       container.appendChild(document.createElement("br"));
 
-      modStates[fullPath] = true;
+      if (!modStates[value.uniqueId]) {
+        modStates[value.uniqueId] = { name, enabled: value.enabled };
+      } else {
+        modStates[value.uniqueId].enabled = value.enabled;
+      }
+
+      checkbox.checked = modStates[value.uniqueId].enabled;
 
       checkbox.addEventListener("change", () => {
-        modStates[fullPath] = checkbox.checked;
+        modStates[value.uniqueId].enabled = checkbox.checked;
       });
-    } else {
-      // 하위 있음 → 부모 + 토글 + 재귀
+    }
+    // 📌 폴더 노드 (object지만 __uniqueId 없음)
+    else if (typeof value === "object") {
       const wrapper = document.createElement("div");
       wrapper.style.marginBottom = "4px";
 
@@ -214,7 +126,6 @@ function renderModTree(
       const parentCheckbox = document.createElement("input");
       parentCheckbox.type = "checkbox";
       parentCheckbox.id = fullPath;
-      parentCheckbox.checked = true;
 
       parentLabel.appendChild(parentCheckbox);
       parentLabel.appendChild(spanCheckbox);
@@ -231,35 +142,54 @@ function renderModTree(
       wrapper.appendChild(subContainer);
       container.appendChild(wrapper);
 
-      // 재귀 호출 (children이 배열이 아니라 객체라고 가정)
-      renderModTree(children, subContainer, fullPath);
+      // 🔁 재귀 호출
+      renderModTree(value, subContainer, fullPath);
+      // 부모 체크박스 초기 상태 계산
+      const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
+        'input[type="checkbox"]'
+      );
 
+      if (childCheckboxes.length > 0) {
+        const allChecked = Array.from(childCheckboxes).every((c) => c.checked);
+        parentCheckbox.checked = allChecked; // 모두 켜져 있으면 부모 = true
+        parentCheckbox.indeterminate =
+          !allChecked && Array.from(childCheckboxes).some((c) => c.checked); // 일부만 켜져 있으면 indeterminate
+      } else {
+        parentCheckbox.checked = false; // 자식이 없으면 기본 true
+      }
+      // 토글 버튼 (열고 닫기)
       toggleBtn.addEventListener("click", () => {
         subContainer.style.display =
           subContainer.style.display === "none" ? "block" : "none";
       });
+
+      // 부모 체크박스 → 자식 전체 토글
       parentCheckbox.addEventListener("change", () => {
         const checked = parentCheckbox.checked;
+        modStates[fullPath].enabled = checked;
 
-        // 부모 경로의 상태도 업데이트
-        modStates[fullPath] = checked;
-
-        // 하위 모든 체크박스 찾아서 상태 변경
         const childCheckboxes = subContainer.querySelectorAll<HTMLInputElement>(
           'input[type="checkbox"]'
         );
         childCheckboxes.forEach((child) => {
           child.checked = checked;
-          modStates[child.id] = checked;
+          if (!modStates[child.id]) {
+            modStates[child.id] = {
+              name: name,
+              enabled: value.enabled ?? false,
+            };
+          } else {
+            modStates[child.id].enabled = checked;
+          }
         });
       });
-      // 자식 쪽 이벤트도 부모랑 연결
+
+      // 자식 체크박스 상태 → 부모 상태 갱신
       subContainer.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
         if (target.type === "checkbox") {
-          modStates[target.id] = target.checked;
+          modStates[target.id].enabled = target.checked;
 
-          // 하위 체크박스 상태 조사
           const childCheckboxes =
             subContainer.querySelectorAll<HTMLInputElement>(
               'input[type="checkbox"]'
@@ -268,204 +198,210 @@ function renderModTree(
             (c) => c.checked
           );
 
-          // 부모 상태 갱신
           parentCheckbox.checked = allChecked;
-          modStates[fullPath] = allChecked;
+          modStates[fullPath].enabled = allChecked;
         }
       });
-      modStates[fullPath] = true;
+      if (!modStates[fullPath]) {
+        modStates[fullPath] = { name: name, enabled: value.enabled ?? false };
+      } else {
+        modStates[fullPath].enabled = value.enabled ?? false;
+      }
     }
   });
 }
 
-// ✅ 렌더링 시작할 때는 기존 UI를 초기화
-function renderMods(modTree: Record<string, any>) {
-  const modContainer = document.getElementById("modCheckboxes")!;
-  modContainer.innerHTML = ""; // 중복 방지
-  renderModTree(modTree, modContainer);
+// =========================================================
+// === ModTree init/refresh (ADD) ==========================
+async function initModTreeIfNeeded() {
+  const container = byId("modCheckboxes");
+  if (!container) return; // 해당 영역이 없는 화면이면 패스
+
+  // 중복 렌더 방지: 새로고침은 refreshModTree() 사용
+  if (modTreeInitialized) return;
+  modTreeInitialized = true;
+
+  await refreshModTree(); // 최초 렌더
+  bindRefreshButton();
 }
-
-// -------------------- 프리셋 관리 --------------------
-const presetContainer = document.getElementById("presetDropdownContainer")!;
-const presetSelected = document.getElementById("presetSelected")!;
-const presetOptions = document.getElementById("presetOptions")!;
-
-// 프리셋 데이터를 가져왔을 때
-function updatePresetDropdownUI(presets: Record<string, any>) {
-  presetOptions.innerHTML = "";
-  Object.keys(presets).forEach((presetName) => {
-    const li = document.createElement("li");
-    li.textContent = presetName;
-    presetOptions.appendChild(li);
-
-    li.addEventListener("click", () => {
-      presetSelected.textContent = presetName;
-      currentPresetName = presetName;
-
-      // 여기서 선택된 프리셋 반영
-      const preset = presets[presetName];
-      if (!preset) return;
-      Object.entries(preset).forEach(([modName, enabled]) => {
-        const checkbox = document.getElementById(modName) as HTMLInputElement;
-        if (checkbox) {
-          checkbox.checked = enabled as boolean;
-          modStates[modName] = enabled as boolean;
-        }
-      });
-      presetContainer.classList.remove("open");
-      presetOptions.innerHTML = "";
-    });
-  });
-}
-
-// 클릭 외부 영역 닫기
-document.addEventListener("click", (e) => {
-  if (!presetContainer.contains(e.target as Node)) {
-    presetContainer.classList.remove("open");
-    presetOptions.innerHTML = "";
-  }
-});
-
-// 토글
-presetSelected.addEventListener("click", () => {
-  presetContainer.classList.toggle("open");
-  if (!presetContainer.classList.contains("open")) {
-    presetOptions.innerHTML = "";
-  }
-  updatePresetDropdownUI(modsConfig);
-});
-
-// 클릭 외부 영역 닫기
-document.addEventListener("click", (e) => {
-  if (!presetContainer.contains(e.target as Node)) {
-    presetContainer.classList.remove("open");
-    presetOptions.innerHTML = "";
-  }
-});
-
-savePresetBtn.addEventListener("click", async () => {
-  const presetName = presetNameInput.value.trim();
-  if (!presetName) return alert(t("alerts.noPresetName"));
-  modsConfig[presetName] = { ...modStates };
-  await window.api.writeConfig(modsConfig);
-  updatePresetDropdownUI(modsConfig);
-  presetNameInput.value = "";
-  alert(`Preset "${presetName}" saved!`);
-});
-
-deletePresetBtn.addEventListener("click", async () => {
-  const presetName = currentPresetName;
-  currentPresetName = "";
-  if (!presetName) return alert(t("alerts.noSelectedPreset"));
-  if (
-    !confirm(
-      t("alerts.deletePresetConfirm").replace("{presetName}", presetName)
-    )
-  )
-    return;
-  delete modsConfig[presetName];
-  await window.api.writeConfig(modsConfig);
-  presetSelected.textContent = t("alerts.noPresetName");
-  alert(`Preset "${presetName}" deleted!`);
-});
-
-// -------------------- Apply & Launch --------------------
-applyBtn.addEventListener("click", async () => {
-  const smapiPath = smapiPathInput.value.trim();
-  if (!smapiPath) return alert(t("alerts.noSmapiPath"));
-
-  const selectedPreset = presetContainer.textContent;
-  if (!selectedPreset) return alert(t("alerts.noSelectedPreset"));
-
-  modsConfig[selectedPreset] = { ...modStates };
-  await window.api.writeConfig(modsConfig);
-
-  await window.api.applyMods(smapiPath, modStates);
-  alert(t("alerts.modsApplied"));
-});
-
-// -------------------- Reset Mods --------------------
-resetBtn.addEventListener("click", async () => {
-  await window.api.resetMods(modStates);
-  alert(t("alerts.modsReset"));
-});
-
-// 수동 새로고침 버튼
-refreshBtn.addEventListener("click", async () => {
-  await refreshModTree();
-});
-openFolderBtn.addEventListener("click", async () => {
-  await window.api.openMyModsFolder();
-  await refreshModTree();
-});
 
 async function refreshModTree() {
-  const tree = await window.api.getModListTree();
-  renderMods(tree);
-  const presetName = presetContainer.textContent?.trim();
-  if (presetName) {
-    const preset = modsConfig[presetName];
-    if (!preset) return;
-    Object.entries(preset).forEach(([modName, enabled]) => {
-      const checkbox = document.getElementById(modName) as HTMLInputElement;
-      if (checkbox) {
-        checkbox.checked = enabled as boolean;
-        modStates[modName] = enabled as boolean;
+  // 기존 DOM 비움(상태는 modStates에 유지됨: 체크 유지 원하면 그대로 둠)
+  contentArea.innerHTML = "";
+  const presetName = sectionTitle.querySelector("input")!;
+
+  // 트리 데이터 재요청
+  const tree = await window.api.readPreset(presetName.value);
+
+  // 관계 맵 초기화(경로 변경 가능성 반영)
+  parentChildrenMap.clear();
+  childParentMap.clear();
+
+  renderBtnInModTrees();
+  renderModTree(tree as any, contentArea);
+}
+
+function bindRefreshButton() {
+  const btn = byId("refreshBtn");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    await refreshModTree();
+  });
+}
+// =========================================================
+
+// -----------------------------
+// 프리셋 리스트 화면
+// -----------------------------
+async function renderPresetList() {
+  sectionTitle.textContent = text.title || "Preset Manager";
+  contentArea.innerHTML = "";
+
+  // 새 프리셋 입력창
+  const presetContainer = document.createElement("div");
+  presetContainer.id = "presetContainer";
+
+  const input = document.createElement("input");
+  input.id = "presetName";
+  input.type = "text";
+  input.placeholder = text.placeholders?.newPreset || "New Preset Name";
+  presetContainer.appendChild(input);
+
+  // 생성 버튼
+  const createBtn = document.createElement("button");
+  createBtn.id = "createPresetBtn";
+  createBtn.textContent = text.buttons?.createPreset || "Create Preset";
+
+  createBtn.addEventListener("click", async () => {
+    const name = input.value.trim();
+    if (!name)
+      return alert(text.alerts?.noPresetName || "Please enter a preset name");
+
+    try {
+      await window.api.createPreset(name, {});
+      renderPresetList();
+    } catch (e) {
+      if (
+        confirm(
+          (
+            text.alerts?.duplicatePreset || "Preset already exists. Overwrite?"
+          ).replace("{presetName}", name)
+        )
+      ) {
+        await window.api.updatePreset(name, name, {});
+        renderPresetList();
       }
-    });
-  }
-}
-
-//다국어지원
-
-function t(key: string): string {
-  return (
-    key
-      .split(".")
-      .reduce<any>(
-        (obj, k) => (obj && typeof obj === "object" ? obj[k] : undefined),
-        i18nMessages
-      ) ?? key
-  );
-}
-async function updateUITexts() {
-  const autoLang = detectBrowserLang();
-  await loadLanguage(autoLang);
-  applyI18n(); // index.html에 i18n 적용
-  savePresetBtn!.textContent = t("buttons.savePreset");
-  deletePresetBtn!.textContent = t("buttons.deletePreset");
-  applyBtn!.textContent = t("buttons.applyMods");
-  resetBtn!.textContent = t("buttons.resetMods");
-  refreshBtn!.textContent = t("buttons.refresh");
-  openFolderBtn!.textContent = t("buttons.openMods");
-}
-
-function detectBrowserLang() {
-  const lang = navigator.language || navigator.language; // ex) "ko-KR"
-  // 지원하는 언어만 매핑 (en, ko, jp 등)
-  if (lang.startsWith("ko")) return "ko";
-  return "en"; // 기본 영어
-}
-
-async function loadLanguage(lang: string) {
-  await window.i18n.setLanguage(lang);
-  i18nMessages = await window.i18n.getMessages();
-}
-
-function applyI18n() {
-  // 텍스트용
-  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((el) => {
-    const key = el.dataset.i18n!;
-    el.textContent = t(key);
+    }
   });
 
-  // placeholder용
-  document
-    .querySelectorAll<HTMLInputElement>("[data-i18n-placeholder]")
-    .forEach((el) => {
-      const key = el.dataset.i18nPlaceholder!;
-      el.placeholder = t(key);
+  contentArea.appendChild(presetContainer);
+  contentArea.appendChild(createBtn);
+
+  const presets = await window.api.getPresetLists();
+
+  // 프리셋 목록
+  const ul = document.createElement("ul");
+  ul.id = "presetList";
+
+  presets.forEach((presetName) => {
+    const li = document.createElement("li");
+    li.textContent = presetName;
+    li.classList.add("preset-item");
+    li.addEventListener("click", async () => {
+      const configs = await window.api.readPreset(presetName);
+      selectedPreset = li.textContent;
+      modStates = configs;
+      contentArea.innerHTML = "";
+
+      renderBtnInModTrees();
+      renderModTree(modStates, contentArea);
     });
+
+    ul.appendChild(li);
+  });
+
+  contentArea.appendChild(ul);
 }
 
-init();
+// -----------------------------
+// 모드 체크박스 화면
+// -----------------------------
+async function renderBtnInModTrees() {
+  sectionTitle.innerHTML = "";
+  const titleInput = document.createElement("input");
+  titleInput.value = selectedPreset!;
+  let newName = titleInput.value;
+  titleInput.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement;
+    newName = target.value.trim();
+  });
+  sectionTitle.appendChild(titleInput);
+  // 버튼 영역
+  const buttonContainer = document.createElement("div");
+  buttonContainer.id = "buttonContainer";
+
+  const updateBtn = document.createElement("button");
+  updateBtn.textContent = text.buttons?.updatePreset || "Update Preset";
+  updateBtn.addEventListener("click", async () => {
+    if (!selectedPreset) return;
+    await window.api.updatePreset(
+      selectedPreset.trim(),
+      newName ?? selectedPreset.trim(),
+      modStates
+    );
+    alert(text.alerts?.presetUpdated || `Preset ${newName} updated.`);
+    refreshModTree();
+  });
+
+  const duplicateBtn = document.createElement("button");
+  duplicateBtn.textContent =
+    text.buttons?.duplicatePreset || "Duplicate Preset";
+  duplicateBtn.addEventListener("click", async () => {
+    if (!selectedPreset) return;
+    const duplicateName = `${newName}_copy`;
+
+    if (!duplicateName) return;
+    await window.api.createPreset(duplicateName, modStates);
+    renderPresetList();
+  });
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = text.buttons?.deletePreset || "Delete Preset";
+  deleteBtn.addEventListener("click", async () => {
+    if (!selectedPreset) return;
+    if (
+      confirm(
+        (
+          text.alerts?.deletePresetConfirm || "Delete preset {presetName}?"
+        ).replace("{presetName}", selectedPreset)
+      )
+    ) {
+      await window.api.deletePreset(selectedPreset);
+      selectedPreset = null;
+      renderPresetList();
+    }
+  });
+
+  const backBtn = document.createElement("button");
+  backBtn.textContent = text.buttons?.back || "Back";
+  backBtn.addEventListener("click", () => {
+    selectedPreset = null;
+    renderPresetList();
+  });
+
+  buttonContainer.appendChild(updateBtn);
+  buttonContainer.appendChild(duplicateBtn);
+  buttonContainer.appendChild(deleteBtn);
+  buttonContainer.appendChild(backBtn);
+
+  contentArea.appendChild(buttonContainer);
+}
+
+// -----------------------------
+// 초기 실행
+// -----------------------------
+(async () => {
+  await initTranslations();
+  renderPresetList();
+  initModTreeIfNeeded();
+})();

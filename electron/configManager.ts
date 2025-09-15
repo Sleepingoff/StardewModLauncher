@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import JSON5 from "json5";
-
+import { dir as directory } from "./const";
+import { loadAllPresets } from "./presetManager";
 export interface ModInfo {
   uniqueId: string;
   name: string;
@@ -45,7 +46,7 @@ export function buildModMapRecursive(
         uniqueId: manifest.UniqueID,
         name: manifest.Name ?? entry.name,
         path: fullPath,
-        enabled: false,
+        enabled: true,
       };
     } else {
       buildModMapRecursive(fullPath, map);
@@ -58,9 +59,25 @@ export function buildModMapRecursive(
 /**
  * config.json 불러오기
  */
-export function loadConfig(configPath: string): Record<string, boolean> {
-  if (!fs.existsSync(configPath)) return {};
-  return JSON.parse(fs.readFileSync(configPath, "utf-8"));
+export function loadConfig(presetName?: string): Record<string, any> {
+  if (!fs.existsSync(directory.CONFIG_PATH)) return {};
+
+  const raw = JSON.parse(fs.readFileSync(directory.CONFIG_PATH, "utf-8"));
+  if (!presetName) return raw;
+
+  let presetConfig = raw[presetName];
+  //기본값이 true인 modtree 반환하기
+  if (!presetConfig) {
+    const modMap = buildModMapRecursive(directory.MODS_DIR);
+    presetConfig = {};
+    for (const [key, value] of Object.entries(modMap)) {
+      presetConfig[key] = {
+        name: value.name,
+        enabled: value.enabled,
+      }; // ✅ 기본값 true
+    }
+  }
+  return configToFolderTree(presetConfig);
 }
 
 /**
@@ -72,30 +89,30 @@ export function loadConfig(configPath: string): Record<string, boolean> {
  * @param modConfig { presetName: { UniqueID: boolean } }
  */
 export function saveConfig(
-  configPath: string,
-  modsDir: string,
-  modConfig: Record<string, Record<string, boolean>>
+  folderTree: Record<string, any>,
+  presetName: string
 ) {
-  // 현재 Mods 폴더에서 UniqueID → 경로 매핑 생성
-  const modMap = buildModMapRecursive(modsDir);
+  const newPreset = folderTreeToConfig(
+    folderTree,
+    directory.MODS_DIR,
+    presetName
+  );
+  // { [presetName]: { uniqueId: {name, enabled} } }
 
-  // 최종 저장될 config 객체
-  const config: Record<string, Record<string, boolean>> = {};
+  const presets = loadAllPresets(); // 기존 전체 프리셋 로드
 
-  // 저장된 프리셋 이름들
-  const presets = Object.keys(modConfig);
+  // 기존 프리셋에 덮어쓰기
+  const merged = {
+    ...presets,
+    ...newPreset,
+  };
 
-  // 프리셋별로 모드 상태를 UniqueID 기준으로 저장
-  for (const preset of presets) {
-    config[preset] = {};
-    for (const uniqueId of Object.keys(modMap)) {
-      config[preset][uniqueId] = modConfig[preset]?.[uniqueId] ?? false;
-    }
-  }
-
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf-8");
+  fs.writeFileSync(
+    directory.CONFIG_PATH,
+    JSON.stringify(merged, null, 2),
+    "utf-8"
+  );
 }
-
 /**
  * 폴더 트리 → config.json 구조
  * @param folderTree scanModsTreeByManifest 결과
@@ -117,10 +134,10 @@ export function folderTreeToConfig(
       if (fs.existsSync(manifestPath)) {
         try {
           const manifest = safeParseManifest(manifestPath);
-          if (manifest.UniqueID) {
+          if (manifest?.UniqueID) {
             presetConfig[manifest.UniqueID] = {
-              name: key, // 폴더명
-              enabled: false, // 기본 비활성화
+              name: key,
+              enabled: tree[key].enabled, // 트리 안에 값이 있으면 반영
             };
           }
         } catch (err) {
@@ -128,7 +145,7 @@ export function folderTreeToConfig(
         }
       }
 
-      if (Object.keys(tree[key]).length > 0) {
+      if (typeof tree[key] === "object" && Object.keys(tree[key]).length > 0) {
         traverse(tree[key], fullPath);
       }
     }
@@ -163,24 +180,23 @@ export function safeParseManifest(manifestPath: string): any | null {
  * @param modsDir Mods 경로
  */
 export function configToFolderTree(
-  config: Record<string, { name: string; enabled: boolean }>,
-  modsDir: string
+  config: Record<string, { name: string; enabled: boolean }>
 ): Record<string, any> {
   const tree: Record<string, any> = {};
 
-  for (const [uniqueId, { name, enabled }] of Object.entries(config)) {
-    const modPath = findModPathByUniqueId(modsDir, uniqueId);
+  for (const [uniqueId, { enabled }] of Object.entries(config)) {
+    const modPath = findModPathByUniqueId(directory.MODS_DIR, uniqueId);
     if (!modPath) continue;
 
-    const relativePath = path.relative(modsDir, modPath);
+    const relativePath = path.relative(directory.MODS_DIR, modPath);
     const parts = relativePath.split(path.sep);
 
     let current = tree;
     parts.forEach((part, idx) => {
       if (!current[part]) current[part] = {};
       if (idx === parts.length - 1) {
-        current[part].__uniqueId = uniqueId;
-        current[part].__enabled = enabled;
+        current[part].uniqueId = uniqueId;
+        current[part].enabled = enabled;
       }
       current = current[part];
     });
