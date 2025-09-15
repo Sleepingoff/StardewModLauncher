@@ -1,5 +1,5 @@
 import fs from "fs";
-import { configToFolderTree, loadConfig, saveConfig } from "./configManager";
+import { loadConfig, saveConfig } from "./configManager";
 import { dir as directory } from "./const";
 /**
  * config.json 전체 로드

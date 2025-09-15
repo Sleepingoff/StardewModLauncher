@@ -27,6 +27,20 @@
   "build": {
     "directories": {
       "output": "release"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "dist/**/*",
+      "public/**/*"
+    ],
+    "mac": {
+      "icon": "public/Stardrop.icns"
+    },
+    "win": {
+      "icon": "public/Stardrop.ico"
+    },
+    "linux": {
+      "icon": "public/Stardrop.png"
     }
   },
   "dependencies": {

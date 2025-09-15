@@ -1,44 +1,10 @@
 // renderer.ts
-interface Presets {
-  [presetName: string]: Record<string, boolean>;
-}
+import "./style.css";
 
 interface ModStates {
   [modName: string]: {
     name: string;
     enabled: boolean;
-  };
-}
-
-interface Window {
-  api: {
-    // 프리셋 관련
-    getPresets: () => Promise<Presets>;
-    getPresetLists: () => Promise<string[]>;
-    readPreset: (presetName: string) => Promise<ModStates>;
-    createPreset: (name: string, mods: ModStates) => Promise<void>;
-    updatePreset: (
-      oldName: string,
-      newName: string,
-      mods: ModStates
-    ) => Promise<void>;
-    deletePreset: (name: string) => Promise<void>;
-
-    getMods: () => Promise<string[]>;
-    getModListTree: () => Promise<Record<string, string[]>>; // 상위 폴더 → 하위 모드
-    applyMods: (smapiPath: string, modStates: ModStates) => Promise<void>;
-    resetMods: (modStates: ModStates) => Promise<void>;
-
-    openMyModsFolder: () => Promise<void>;
-    readConfig: () => Promise<Presets>;
-    syncConfigIngame: (smapiPath: string) => Promise<{ success: boolean }>;
-
-    writeInfo: (data: Record<string, string>) => Promise<void>;
-    readInfo: () => Promise<Record<string, string>>;
-
-    // 다국어 지원
-    getLocale: () => Promise<string>; // ex) "en", "ko"
-    getTranslations: (locale: string) => Promise<Record<string, any>>;
   };
 }
 
@@ -67,21 +33,21 @@ let modTreeInitialized = false;
 const byId = <T extends HTMLElement = HTMLElement>(id: string) =>
   document.getElementById(id) as T | null;
 
-const joinPath = (...parts: string[]) => parts.filter(Boolean).join("/");
+// const joinPath = (...parts: string[]) => parts.filter(Boolean).join("/");
 
-// 부모 클릭 시 하위 전체 토글
-function setBranchChecked(rootPath: string, checked: boolean) {
-  modStates[rootPath].enabled = checked;
-  const children = parentChildrenMap.get(rootPath) || [];
-  for (const child of children) {
-    modStates[child].enabled = checked;
-    const cb = document.querySelector<HTMLInputElement>(
-      `input[type="checkbox"][data-path="${CSS.escape(child)}"]`
-    );
-    if (cb) cb.checked = checked;
-    setBranchChecked(child, checked);
-  }
-}
+// // 부모 클릭 시 하위 전체 토글
+// function setBranchChecked(rootPath: string, checked: boolean) {
+//   modStates[rootPath].enabled = checked;
+//   const children = parentChildrenMap.get(rootPath) || [];
+//   for (const child of children) {
+//     modStates[child].enabled = checked;
+//     const cb = document.querySelector<HTMLInputElement>(
+//       `input[type="checkbox"][data-path="${CSS.escape(child)}"]`
+//     );
+//     if (cb) cb.checked = checked;
+//     setBranchChecked(child, checked);
+//   }
+// }
 
 function getNestedValue(obj: any, path: string) {
   return path.split(".").reduce((acc, part) => acc?.[part], obj);

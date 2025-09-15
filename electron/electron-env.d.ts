@@ -15,13 +15,44 @@ declare namespace NodeJS {
      * │
      * ```
      */
-    APP_ROOT: string
+    APP_ROOT: string;
     /** /dist/ or /public/ */
-    VITE_PUBLIC: string
+    VITE_PUBLIC: string;
   }
 }
-
+interface Presets {
+  [presetName: string]: Record<string, boolean>;
+}
 // Used in Renderer process, expose in `preload.ts`
+
 interface Window {
-  ipcRenderer: import('electron').IpcRenderer
+  api: {
+    // 프리셋 관련
+    getPresets: () => Promise<Presets>;
+    getPresetLists: () => Promise<string[]>;
+    readPreset: (presetName: string) => Promise<ModStates>;
+    createPreset: (name: string, mods: ModStates) => Promise<void>;
+    updatePreset: (
+      oldName: string,
+      newName: string,
+      mods: ModStates
+    ) => Promise<void>;
+    deletePreset: (name: string) => Promise<void>;
+
+    getMods: () => Promise<string[]>;
+    getModListTree: () => Promise<Record<string, string[]>>; // 상위 폴더 → 하위 모드
+    applyMods: (smapiPath: string, modStates: ModStates) => Promise<void>;
+    resetMods: (modStates: ModStates) => Promise<void>;
+
+    openMyModsFolder: () => Promise<void>;
+    readConfig: () => Promise<Presets>;
+    syncConfigIngame: (smapiPath: string) => Promise<{ success: boolean }>;
+
+    writeInfo: (data: Record<string, string>) => Promise<void>;
+    readInfo: () => Promise<Record<string, string>>;
+
+    // 다국어 지원
+    getLocale: () => Promise<string>; // ex) "en", "ko"
+    getTranslations: (locale: string) => Promise<Record<string, any>>;
+  };
 }

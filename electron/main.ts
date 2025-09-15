@@ -18,6 +18,12 @@ function createWindow() {
     minHeight: 700,
     width: 560,
     height: 800,
+    icon: path.join(
+      app.isPackaged
+        ? process.resourcesPath
+        : path.join(directory.__dirname, "public"),
+      "Stardrop.png"
+    ), // 아이콘 경로
     webPreferences: {
       preload: path.join(directory.__dirname, "preload.mjs"),
       contextIsolation: true,
@@ -28,7 +34,7 @@ function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(path.join(__dirname, "../dist/index.html"));
+    win.loadFile(path.join(directory.__dirname, "../dist/index.html"));
   }
 }
 
@@ -180,7 +186,7 @@ ipcMain.handle("read-info", () => {
 });
 
 // 사용자 설정 쓰기
-ipcMain.handle("write-info", (event, data) => {
+ipcMain.handle("write-info", (_event, data) => {
   return writeInfo(data);
 });
 
@@ -229,7 +235,7 @@ ipcMain.handle("sync-config-ingame", async (_event, smapiPath: string) => {
 // 프리셋 생성
 ipcMain.handle(
   "create-preset",
-  (event, name: string, mods: Record<string, boolean>) => {
+  (_event, name: string, mods: Record<string, boolean>) => {
     createPreset(name, mods);
   }
 );
@@ -238,7 +244,7 @@ ipcMain.handle(
 ipcMain.handle(
   "update-preset",
   (
-    event,
+    _event,
     oldName: string,
     newName: string,
     mods: Record<string, { name: string; enabled: boolean }>
@@ -247,12 +253,12 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle("read-preset", (event, presetName: string) => {
+ipcMain.handle("read-preset", (_event, presetName: string) => {
   return readPreset(presetName);
 });
 
 // 프리셋 삭제
-ipcMain.handle("delete-preset", (event, name: string) => {
+ipcMain.handle("delete-preset", (_event, name: string) => {
   deletePreset(name);
 });
 // 현재 OS 언어 가져오기
@@ -261,7 +267,7 @@ ipcMain.handle("get-locale", () => {
 });
 
 // 번역 리소스 불러오기
-ipcMain.handle("get-translations", (event, locale: string) => {
+ipcMain.handle("get-translations", (_event, locale: string) => {
   const filePath = path.join(directory.__dirname, "locales", `${locale}.json`);
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));

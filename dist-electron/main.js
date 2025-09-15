@@ -1913,13 +1913,13 @@ var lib$1 = {
 };
 const fs = /* @__PURE__ */ getDefaultExportFromCjs(lib$1);
 const __filename = fileURLToPath(import.meta.url);
-const __dirname$1 = path$c.dirname(__filename);
-const CONFIG_PATH = path$c.join(__dirname$1, "config.json");
-const INFO_PATH = path$c.join(__dirname$1, "info.json");
-const MODS_DIR = path$c.join(__dirname$1, "Mods");
+const __dirname = path$c.dirname(__filename);
+const CONFIG_PATH = path$c.join(__dirname, "config.json");
+const INFO_PATH = path$c.join(__dirname, "info.json");
+const MODS_DIR = path$c.join(__dirname, "Mods");
 const dir = {
   __filename,
-  __dirname: __dirname$1,
+  __dirname,
   CONFIG_PATH,
   INFO_PATH,
   MODS_DIR
@@ -3245,6 +3245,11 @@ function createWindow() {
     minHeight: 700,
     width: 560,
     height: 800,
+    icon: path$c.join(
+      app.isPackaged ? process.resourcesPath : path$c.join(dir.__dirname, "public"),
+      "Stardrop.png"
+    ),
+    // 아이콘 경로
     webPreferences: {
       preload: path$c.join(dir.__dirname, "preload.mjs"),
       contextIsolation: true,
@@ -3254,7 +3259,7 @@ function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
-    win.loadFile(path$c.join(__dirname, "../dist/index.html"));
+    win.loadFile(path$c.join(dir.__dirname, "../dist/index.html"));
   }
 }
 app.whenReady().then(createWindow);
@@ -3332,7 +3337,7 @@ ipcMain.handle("get-mods", () => {
 ipcMain.handle("read-info", () => {
   return readInfo();
 });
-ipcMain.handle("write-info", (event, data) => {
+ipcMain.handle("write-info", (_event, data) => {
   return writeInfo(data);
 });
 ipcMain.handle("sync-config-ingame", async (_event, smapiPath) => {
@@ -3366,26 +3371,26 @@ ipcMain.handle("sync-config-ingame", async (_event, smapiPath) => {
 });
 ipcMain.handle(
   "create-preset",
-  (event, name, mods) => {
+  (_event, name, mods) => {
     createPreset(name, mods);
   }
 );
 ipcMain.handle(
   "update-preset",
-  (event, oldName, newName, mods) => {
+  (_event, oldName, newName, mods) => {
     updatePreset(oldName, newName, mods);
   }
 );
-ipcMain.handle("read-preset", (event, presetName) => {
+ipcMain.handle("read-preset", (_event, presetName) => {
   return readPreset(presetName);
 });
-ipcMain.handle("delete-preset", (event, name) => {
+ipcMain.handle("delete-preset", (_event, name) => {
   deletePreset(name);
 });
 ipcMain.handle("get-locale", () => {
   return app.getLocale().startsWith("ko") ? "ko" : "en";
 });
-ipcMain.handle("get-translations", (event, locale) => {
+ipcMain.handle("get-translations", (_event, locale) => {
   const filePath = path$c.join(dir.__dirname, "locales", `${locale}.json`);
   if (!fs.existsSync(filePath)) return {};
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
