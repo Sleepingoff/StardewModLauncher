@@ -11,8 +11,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-
+        os: [macos-latest, windows-latest]
+    env:
+          DROP_TOKEN: ${{ secrets.DROP_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,5 +31,4 @@ jobs:
 
       - name: Package & Publish with electron-builder
         run: npx electron-builder --${{ matrix.os == 'windows-latest' && 'win' || (matrix.os == 'macos-latest' && 'mac' || 'linux') }} --publish always
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
