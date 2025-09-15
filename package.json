@@ -7,12 +7,13 @@
   "displayName": "StardewModLauncher",
   "description": "stardew valley mod launcher",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
-    "preview": "vite preview"
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "publish": "electron-builder --mac --win --x64 -p always"
   },
   "devDependencies": {
     "electron": "^30.0.1",
@@ -25,6 +26,13 @@
   },
   "main": "dist-electron/main.js",
   "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "SleepingOff",
+        "repo": "StardewModLauncher"
+      }
+    ],
     "directories": {
       "output": "release"
     },
@@ -37,6 +45,7 @@
       "icon": "public/Stardrop.icns"
     },
     "win": {
+      "target": "nsis",
       "icon": "public/Stardrop.ico"
     },
     "linux": {

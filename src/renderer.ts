@@ -567,6 +567,7 @@ async function initUserInfo() {
 savePathBtn.addEventListener("click", async () => {
   const smapiPath = smapiPathInput.value.trim();
   await window.api.writeInfo({ smapiPath });
+  alert(text.alerts.savePath);
 });
 // -------------------- Apply  --------------------
 applyBtn.addEventListener("click", async () => {
