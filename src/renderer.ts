@@ -2,7 +2,8 @@
 import "./style.css";
 
 interface ModStates {
-  [modName: string]: {
+  [uniqueId: string]: {
+    uniqueId: string;
     name: string;
     enabled: boolean;
   };
@@ -208,7 +209,6 @@ function renderModTree(
 ) {
   Object.entries(tree).forEach(([name, value]) => {
     const fullPath = parentPath ? `${parentPath}/${name}` : name;
-
     // 📌 leaf: 모드 노드 (__uniqueId, __enabled 보유)
     if (typeof value === "object" && value.uniqueId) {
       const checkbox = document.createElement("input");
@@ -217,7 +217,7 @@ function renderModTree(
       checkbox.checked = !!value.enabled;
 
       // uniqueId, name 저장
-      checkbox.dataset.uniqueId = value.uniqueId;
+      checkbox.dataset.uniqueId = value.uniqueId; // ✅ 여기서 UID 지정
       checkbox.dataset.name = name;
 
       const label = document.createElement("label");
@@ -230,15 +230,14 @@ function renderModTree(
       container.appendChild(label);
       container.appendChild(document.createElement("br"));
 
-      // modStates 업데이트 (uniqueId 기반)
-      modStates[value.uniqueId] = {
-        name,
-        enabled: checkbox.checked,
-      };
+      modStates[value.name] = { ...value, enabled: checkbox.checked };
 
-      checkbox.addEventListener("change", () => {
-        const uid = checkbox.dataset.uniqueId!;
-        modStates[uid].enabled = checkbox.checked;
+      checkbox.addEventListener("change", (e) => {
+        const target = e.currentTarget as HTMLInputElement;
+        const name = target.dataset.name!;
+
+        modStates[name].enabled = checkbox.checked;
+        updateModCount();
       });
     }
 
@@ -304,25 +303,27 @@ function renderModTree(
         childCheckboxes.forEach((child) => {
           child.checked = checked;
 
+          const name = child.dataset.name!;
           const uid = child.dataset.uniqueId!;
-          modStates[uid] = {
-            ...(modStates[uid] ?? {
+          modStates[name] = {
+            ...(modStates[name] ?? {
               uniqueId: uid,
-              name: child.dataset.name ?? uid,
+              name,
             }),
             enabled: checked,
           };
         });
 
         parentCheckbox.indeterminate = false;
+        updateModCount();
       });
 
       // 자식 체크박스 상태 → 부모 상태 갱신
       subContainer.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
         if (target.type === "checkbox" && target.dataset.uniqueId) {
-          const uid = target.dataset.uniqueId;
-          modStates[uid].enabled = target.checked;
+          const name = target.dataset.name!;
+          modStates[name] = { ...modStates[name], enabled: target.checked };
         }
 
         const leafBoxes = subContainer.querySelectorAll<HTMLInputElement>(
@@ -332,12 +333,13 @@ function renderModTree(
         const checkedCount = Array.from(leafBoxes).filter(
           (c) => c.checked
         ).length;
-
         parentCheckbox.checked = total > 0 && checkedCount === total;
         parentCheckbox.indeterminate = checkedCount > 0 && checkedCount < total;
+        updateModCount();
       });
     }
   });
+  updateModCount();
 }
 
 // =========================================================
@@ -444,7 +446,7 @@ async function renderPresetList() {
 
       renderBtnInModTrees();
       renderModTree(modStates, contentArea);
-      modStates = {};
+      // modStates = {};
     });
 
     ul.appendChild(li);
@@ -461,21 +463,32 @@ function syncModStatesFromUI() {
   contentArea
     .querySelectorAll<HTMLInputElement>("input[type=checkbox]")
     .forEach((cb) => {
-      const key = cb.dataset.path || cb.id; // label.dataset.path 활용 가능
+      const key = cb.dataset.uniqueId || cb.id; // label.dataset.path 활용 가능
       if (!key) return;
 
-      if (!modStates[key]) {
-        modStates[key] = { name: cb.dataset.name ?? key, enabled: cb.checked }; // 없으면 생성
-      } else {
-        modStates[key].enabled = cb.checked; // 있으면 갱신
-      }
+      modStates[cb.dataset.name!] = {
+        name: cb.dataset.name!,
+        uniqueId: key,
+        enabled: cb.checked,
+      };
     });
 }
 
 async function renderBtnInModTrees() {
   sectionTitle.innerHTML = "";
+
   const presetNameInfo = document.createElement("p");
+  presetNameInfo.style.margin = "auto";
   presetNameInfo.textContent = text.info?.presetName || "Input Preset Name";
+
+  const total = Object.keys(modStates).length;
+  const checked = Object.values(modStates).filter((m) => m.enabled).length;
+
+  const counter = document.createElement("span");
+  counter.id = "counter";
+  counter.textContent = `${checked} /  ${total}`;
+
+  presetNameInfo.appendChild(counter);
   sectionTitle.prepend(presetNameInfo);
   const titleInput = document.createElement("input");
   titleInput.id = "presetName";
@@ -485,7 +498,9 @@ async function renderBtnInModTrees() {
     const target = e.target as HTMLInputElement;
     newName = target.value.trim();
   });
+
   sectionTitle.appendChild(titleInput);
+
   // 버튼 영역
   const buttonContainer = document.createElement("div");
   buttonContainer.id = "buttonContainer";
@@ -545,8 +560,25 @@ async function renderBtnInModTrees() {
   buttonContainer.appendChild(deleteBtn);
   buttonContainer.appendChild(backBtn);
 
-  contentArea.appendChild(buttonContainer);
+  sectionTitle.appendChild(buttonContainer);
+
+  contentArea.appendChild(sectionTitle);
 }
+function updateModCount() {
+  syncModStatesFromUI();
+  const total = Object.entries(modStates).filter(
+    ([_, value]) => !!value.name
+  ).length;
+  const checked = Object.entries(modStates).filter(
+    ([_, value]) => value.enabled && value.name
+  ).length; // value.enabled가 true인 것만
+
+  const counter = document.getElementById("counter");
+  if (counter) {
+    counter.textContent = `${checked} / ${total}`;
+  }
+}
+
 // -----------------------------
 // util buttons
 // -----------------------------

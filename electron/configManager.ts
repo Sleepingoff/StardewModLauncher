@@ -181,12 +181,13 @@ export function safeParseManifest(manifestPath: string): any | null {
  * @param modsDir Mods 경로
  */
 export function configToFolderTree(
-  config: Record<string, { uniqueId: string; enabled: boolean }>
+  config: Record<string, { name: string; enabled: boolean }>
 ): Record<string, any> {
   const tree: Record<string, any> = {};
 
-  for (const [name, { enabled }] of Object.entries(config)) {
-    const modPath = findModPathByUniqueId(directory.MODS_DIR, name);
+  for (const [uniqueId, { name, enabled }] of Object.entries(config)) {
+    const modPath = findModPathByUniqueId(directory.MODS_DIR, uniqueId);
+
     if (!modPath) continue;
 
     const relativePath = path.relative(directory.MODS_DIR, modPath);
@@ -197,13 +198,13 @@ export function configToFolderTree(
     parts.forEach((part, idx) => {
       if (!current[part]) current[part] = {};
       if (idx === parts.length - 1) {
-        current[part].uniqueId = name;
+        current[part].uniqueId = uniqueId;
+        current[part].name = name;
         current[part].enabled = enabled;
       }
       current = current[part];
     });
   }
-
   return tree;
 }
 
