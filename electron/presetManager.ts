@@ -1,5 +1,5 @@
 import fs from "fs";
-import { loadConfig, saveConfig } from "./configManager";
+import { configToFolderTree, loadConfig, saveConfig } from "./configManager";
 import { dir as directory } from "./const";
 /**
  * config.json 전체 로드
@@ -23,12 +23,7 @@ export function listPresets(): string[] {
 /**
  * 특정 프리셋 로드
  */
-export function loadPreset(
-  presetName: string
-): Record<string, { name: string; enabled: boolean }> {
-  const all = loadAllPresets();
-  return all[presetName] ?? {};
-}
+
 // 프리셋 생성 (이미 존재하면 에러 처리)
 export function createPreset(
   presetName: string,
@@ -45,7 +40,11 @@ export function createPreset(
 
 export function readPreset(presetName: string) {
   const config = loadConfig(presetName);
-  return config;
+  // flat 구조 가져오기
+
+  // ✅ UI에만 필요할 때 트리 변환
+  const treeConfig = configToFolderTree(config);
+  return treeConfig;
 }
 // 프리셋 수정 (기존 이름을 새 이름으로 변경 가능)
 export function updatePreset(
@@ -54,19 +53,21 @@ export function updatePreset(
   mods: Record<string, { name: string; enabled: boolean }>
 ) {
   const prevConfig = readPreset(oldName);
+
+  // ✅ flat 병합 (새로운 값이 기존 값 덮어쓰기)
   const newConfig = {
     ...prevConfig,
     ...mods,
   };
 
-  // 1️⃣ 새 프리셋 먼저 저장
-  savePreset(newName, newConfig);
-
-  // 2️⃣ 이름이 다르면 기존 프리셋 삭제
+  // 기존 이름이 다르면 삭제
   if (oldName !== newName) {
     deletePreset(oldName);
   }
+
+  savePreset(newName, newConfig);
 }
+
 /*
  * 특정 프리셋 저장 (기존 파일에 merge)
  */

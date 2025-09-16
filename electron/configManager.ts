@@ -60,25 +60,30 @@ export function buildModMapRecursive(
  * config.json 불러오기
  */
 export function loadConfig(presetName?: string): Record<string, any> {
-  if (!fs.existsSync(directory.CONFIG_PATH))
-    fs.mkdirSync(directory.CONFIG_PATH);
+  if (!fs.existsSync(directory.CONFIG_PATH)) {
+    fs.writeFileSync(directory.CONFIG_PATH, "{}");
+  }
 
   const raw = JSON.parse(fs.readFileSync(directory.CONFIG_PATH, "utf-8"));
   if (!presetName) return raw;
 
   let presetConfig = raw[presetName];
-  //기본값이 true인 modtree 반환하기
   if (!presetConfig) {
-    const modMap = buildModMapRecursive(directory.MODS_DIR);
-    presetConfig = {};
-    for (const [key, value] of Object.entries(modMap)) {
-      presetConfig[key] = {
-        name: value.name,
-        enabled: value.enabled,
-      }; // ✅ 기본값 true
+    // preset이 없으면 modMap 그대로 반환
+    return buildModMapRecursive(directory.MODS_DIR);
+  }
+
+  // ✅ modMap 불러오기
+  const modMap = buildModMapRecursive(directory.MODS_DIR);
+
+  // ✅ config.json 상태 반영
+  for (const [id, mod] of Object.entries(modMap)) {
+    if (presetConfig[id]) {
+      mod.enabled = presetConfig[id].enabled;
     }
   }
-  return configToFolderTree(presetConfig);
+
+  return modMap; // 👈 이제 UI에서 바로 쓸 수 있는 구조
 }
 
 /**
@@ -93,11 +98,7 @@ export function saveConfig(
   folderTree: Record<string, any>,
   presetName: string
 ) {
-  const newPreset = folderTreeToConfig(
-    folderTree,
-    directory.MODS_DIR,
-    presetName
-  );
+  const newPreset = folderTreeToConfig(folderTree, directory.MODS_DIR);
   // { [presetName]: { uniqueId: {name, enabled} } }
 
   const presets = loadAllPresets(); // 기존 전체 프리셋 로드
@@ -105,7 +106,7 @@ export function saveConfig(
   // 기존 프리셋에 덮어쓰기
   const merged = {
     ...presets,
-    ...newPreset,
+    [presetName]: newPreset,
   };
 
   fs.writeFileSync(
@@ -115,50 +116,48 @@ export function saveConfig(
   );
 }
 /**
- * 폴더 트리 → config.json 구조
- * @param folderTree scanModsTreeByManifest 결과
- * @param baseDir Mods 경로
- * @param presetName 저장할 프리셋 이름
+ * UI 트리 → modMap(flat)
+ * @param folderTree UI에서 사용하는 트리 구조
+ * @param baseDir Mods 디렉토리 경로
  */
 export function folderTreeToConfig(
   folderTree: Record<string, any>,
-  baseDir: string,
-  presetName: string
-): Record<string, Record<string, { name: string; enabled: boolean }>> {
-  const presetConfig: Record<string, { name: string; enabled: boolean }> = {};
+  baseDir: string
+): Record<
+  string,
+  { uniqueId: string; name: string; path: string; enabled: boolean }
+> {
+  const flatMap: Record<
+    string,
+    { uniqueId: string; name: string; path: string; enabled: boolean }
+  > = {};
 
   function traverse(tree: Record<string, any>, currentPath: string) {
-    for (const key of Object.keys(tree)) {
+    for (const [key, value] of Object.entries(tree)) {
       const fullPath = path.join(currentPath, key);
-      const manifestPath = path.join(fullPath, "manifest.json");
 
-      if (fs.existsSync(manifestPath)) {
-        try {
-          const manifest = safeParseManifest(manifestPath);
-          if (manifest?.UniqueID) {
-            presetConfig[manifest.UniqueID] = {
-              name: key,
-              enabled: tree[key].enabled, // 트리 안에 값이 있으면 반영
-            };
-          }
-        } catch (err) {
-          console.error("manifest.json parse error:", manifestPath, err);
+      if (value && typeof value === "object") {
+        if (!value.name) continue;
+        if (value.uniqueId) {
+          // ✅ leaf → modMap 항목으로 저장
+          flatMap[value.uniqueId] = {
+            uniqueId: value.uniqueId,
+            name: value.name ?? key,
+            path: fullPath,
+            enabled: value.enabled ?? false,
+          };
+        } else {
+          // ✅ 하위 폴더 탐색
+          traverse(value, fullPath);
         }
-      }
-
-      if (typeof tree[key] === "object" && Object.keys(tree[key]).length > 0) {
-        traverse(tree[key], fullPath);
       }
     }
   }
 
   traverse(folderTree, baseDir);
-
-  // 프리셋 단위로 감싸기
-  return {
-    [presetName]: presetConfig,
-  };
+  return flatMap;
 }
+
 export function safeParseManifest(manifestPath: string): any | null {
   if (!fs.existsSync(manifestPath)) return null;
 
