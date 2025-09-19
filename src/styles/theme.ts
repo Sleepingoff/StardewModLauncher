@@ -1,6 +1,6 @@
 export const theme = {
   colors: {
-    background: "#ffd284", // 메인 배경
+    background: "#fff", // 메인 배경
     primary: "#df801b", // 주 버튼 색
     secondary: "#f9b24f", // 보조 버튼 색
     accent: "#df650e", // 포인트 색

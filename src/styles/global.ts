@@ -24,23 +24,36 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   input {
+    margin: 0 8px;
     border-radius: 16px;
     padding: 8px 16px;
     border: 1px solid ${({ theme }) => theme.colors.primary};
+    width: 60%;
   }
 
-  button {
-    display: inline-block;
-    min-width: 160px;
-    border-radius: 2px;
-    border: 2px solid ${({ theme }) => theme.colors.border};
-    background: linear-gradient(
-      230deg,
-      ${({ theme }) => theme.colors.secondary} 20%,
-      ${({ theme }) => theme.colors.primary} 70%,
-      ${({ theme }) => theme.colors.accent} 90%
-    );
-    cursor: pointer;
-    padding: 4px;
-  }
+    input[type="checkbox"] {
+      clip: rect(1px, 1px, 1px, 1px);
+      clip-path: inset(50%);
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+    }
+
+    input[type="checkbox"]+span {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      padding: 2px;
+      margin: 0px 4px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+
+    input:checked+span {
+      background: url(./assets/junimo.jpg) no-repeat center bottom;
+      background-size: cover;
+    }
 `;
