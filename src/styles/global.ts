@@ -55,4 +55,11 @@ export const GlobalStyle = createGlobalStyle`
       background: url(./assets/junimo.jpg) no-repeat center bottom;
       background-size: cover;
     }
+
+   .ell{ 
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+    }
 `;

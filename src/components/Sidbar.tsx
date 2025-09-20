@@ -8,6 +8,7 @@ import { Button } from "./Button";
 import Tooltip from "./Tooltip";
 
 const Sidebar = () => {
+  //todo:padding 주기
   const [open, setOpen] = useState(false);
   const handleToggleSidebar = () => {
     setOpen((prev) => !prev);
