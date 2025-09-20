@@ -93,8 +93,10 @@ const StyledSection = styled.section`
   width: fit-content;
   height: fit-content;
   position: relative;
+  z-index: 10;
 
   & > section {
+    padding: 4px;
     width: fit-content;
     min-width: 90vw;
     height: 100vh;

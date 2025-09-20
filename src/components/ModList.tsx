@@ -184,7 +184,7 @@ const ModList = ({ presetName }: Props) => {
 
   return (
     <Container>
-      <Header>
+      <Header style={{ position: "sticky", top: "0px", background: "#fff" }}>
         <PresetNameInput
           value={currentName}
           onChange={(e) => setCurrentName(e.target.value)}
@@ -194,15 +194,17 @@ const ModList = ({ presetName }: Props) => {
         <Counter>
           {checked} / {total}
         </Counter>
+
+        <ButtonContainer>
+          <Button onClick={handleSavePreset} disabled={saving}>
+            {saving ? "저장 중..." : "프리셋 저장"}
+          </Button>
+          <Button onClick={handleApply} disabled={applying}>
+            {applying ? "적용 중..." : "모드 적용"}
+          </Button>
+        </ButtonContainer>
       </Header>
-      <ButtonContainer>
-        <Button onClick={handleSavePreset} disabled={saving}>
-          {saving ? "저장 중..." : "프리셋 저장"}
-        </Button>
-        <Button onClick={handleApply} disabled={applying}>
-          {applying ? "적용 중..." : "모드 적용"}
-        </Button>
-      </ButtonContainer>
+
       <TreeContainer>{renderTree(mods)}</TreeContainer>
     </Container>
   );
