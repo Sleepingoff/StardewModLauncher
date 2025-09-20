@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import { dir as directory } from "./const";
 
-import { shell } from "electron";
+import { dialog, shell } from "electron";
 // main.ts
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
@@ -159,7 +159,16 @@ ipcMain.handle("read-config", async () => {
 // // -------- Mods 폴더 열기 --------
 ipcMain.handle("open-mods-folder", async () => {
   if (!fs.existsSync(directory.MODS_DIR)) fs.mkdirSync(directory.MODS_DIR);
-  shell.openPath(directory.MODS_DIR);
+  const result = await shell.openPath(directory.MODS_DIR);
+
+  if (result) {
+    // shell.openPath는 실패하면 에러 메시지를 반환합니다.
+    await dialog.showMessageBox(BrowserWindow.getFocusedWindow()!, {
+      type: "error",
+      title: "오류",
+      message: `모드 폴더를 열 수 없습니다.\n${result}`,
+    });
+  }
 });
 
 // Preset 가져오기

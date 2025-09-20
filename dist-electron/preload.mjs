@@ -6,16 +6,7 @@ electron.contextBridge.exposeInMainWorld("i18n", {
   getMessages: (lang) => electron.ipcRenderer.invoke("load-locale", { lang })
 });
 electron.contextBridge.exposeInMainWorld("api", {
-  // // 경로 가져오기
-  // getPaths: (): Promise<{
-  //   modsOriginalPath: string;
-  //   configPath: string;
-  // }> => ipcRenderer.invoke("get-paths"),
-  // // 모드 목록 가져오기
   getModList: () => electron.ipcRenderer.invoke("get-mod-list"),
-  // getModListTree: () => ipcRenderer.invoke("get-mod-list-tree"),
-  // setModList: (filePaths: string[], containerPath: string) =>
-  //   ipcRenderer.invoke("mod-drop", { filePaths, containerPath }),
   // 모드 적용
   applyMods: (smapiPath, modStates) => electron.ipcRenderer.invoke("apply-mods", smapiPath, modStates),
   // 모드 초기화

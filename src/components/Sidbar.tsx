@@ -12,6 +12,14 @@ const Sidebar = () => {
   const handleToggleSidebar = () => {
     setOpen((prev) => !prev);
   };
+
+  const handleClickOpenMyFolder = async () => {
+    try {
+      await window.api.openMyModsFolder();
+    } catch (err) {
+      alert("모드 폴더를 열 수 없습니다.");
+    }
+  };
   return (
     <StyledSection>
       <IconButton
@@ -68,6 +76,7 @@ const Sidebar = () => {
                 marginTop: "16px",
                 width: "80vw",
               }}
+              onClick={handleClickOpenMyFolder}
             >
               내 모드 폴더 열기
             </Button>

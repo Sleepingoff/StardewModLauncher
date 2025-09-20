@@ -7,17 +7,7 @@ contextBridge.exposeInMainWorld("i18n", {
 });
 
 contextBridge.exposeInMainWorld("api", {
-  // // 경로 가져오기
-  // getPaths: (): Promise<{
-  //   modsOriginalPath: string;
-  //   configPath: string;
-  // }> => ipcRenderer.invoke("get-paths"),
-
-  // // 모드 목록 가져오기
   getModList: (): Promise<string[]> => ipcRenderer.invoke("get-mod-list"),
-  // getModListTree: () => ipcRenderer.invoke("get-mod-list-tree"),
-  // setModList: (filePaths: string[], containerPath: string) =>
-  //   ipcRenderer.invoke("mod-drop", { filePaths, containerPath }),
   // 모드 적용
   applyMods: (
     smapiPath: string,

@@ -4,7 +4,7 @@ import require$$0$1 from "stream";
 import require$$4 from "util";
 import require$$5 from "assert";
 import path$c from "path";
-import { app, ipcMain, shell, BrowserWindow } from "electron";
+import { app, ipcMain, shell, dialog, BrowserWindow } from "electron";
 import { fileURLToPath } from "url";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
@@ -3320,7 +3320,15 @@ ipcMain.handle("read-config", async () => {
 });
 ipcMain.handle("open-mods-folder", async () => {
   if (!fs.existsSync(dir.MODS_DIR)) fs.mkdirSync(dir.MODS_DIR);
-  shell.openPath(dir.MODS_DIR);
+  const result = await shell.openPath(dir.MODS_DIR);
+  if (result) {
+    await dialog.showMessageBox(BrowserWindow.getFocusedWindow(), {
+      type: "error",
+      title: "오류",
+      message: `모드 폴더를 열 수 없습니다.
+${result}`
+    });
+  }
 });
 ipcMain.handle("get-presets", () => {
   const config = loadAllPresets();
